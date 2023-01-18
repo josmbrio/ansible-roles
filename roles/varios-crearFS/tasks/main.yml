@@ -1,0 +1,24 @@
+---
+- name: "CREAR VG"
+  command: "vgcreate {{ nombreVG }} {{ disco }}"
+  ignore_errors: yes
+
+- name: "CREAR LVM"
+  lvol:
+    vg: '{{ nombreVG }}'
+    lv: '{{ nombreLV }}'
+    size: 100%FREE
+  ignore_errors: yes
+
+- name: "CREAR FS"
+  filesystem:
+    fstype: '{{ sisarch }}'
+    dev: "/dev/mapper/{{ nombreVG }}-{{ nombreLV }}"
+
+- name: "MONTAR FS"
+  mount:
+    path: '{{ rutaFS }}'
+    src: "/dev/mapper/{{ nombreVG }}-{{ nombreLV }}"
+    fstype: "{{ sisarch }}"
+    opts: defaults
+    state: mounted

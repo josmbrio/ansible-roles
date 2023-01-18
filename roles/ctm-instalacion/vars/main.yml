@@ -1,0 +1,7 @@
+---
+# vars file for ctm-instalacion
+INSTALL_AGENT_LINUX_X86_64: Y
+paquetelegado8:
+  - 'compat-libstdc++-33-3.2.3-72.el7.x86_64.rpm'
+paquetelegado8ruta:
+  - '/root/legado/compat-libstdc++-33-3.2.3-72.el7.x86_64.rpm'

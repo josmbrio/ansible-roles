@@ -1,0 +1,34 @@
+---
+- name: Hacer una copia de la plantilla de checklist
+  copy:
+    src: roles/publicar_checklist/templates/Checklist_Servidores_Template.xlsx
+    dest: "/tmp/Checklist_Servidores_{{nombre}}.xlsx"
+  delegate_to: localhost
+  run_once: true
+
+- name: Agrega servidores y checks al archivo
+  shell:
+    cmd: python roles/publicar_checklist/files/genera_checklist.py "{{ ansible_hostname }}" "{{ ansible_default_ipv4['address'] }}" $(date +%d-%m-%Y)
+  delegate_to: localhost
+
+- name: Publicar en la ruta compartida
+  ansible.windows.win_copy:  
+    src: "/tmp/Checklist_Servidores_{{nombre}}.xlsx"
+    dest: 'D:\SIS\Network\Servidores\SIS Infraestructura TI\06. Manuales e Instructivos\Estándares\Lineamientos Proyectos y Checklist\Checklist servidores entregados'
+  delegate_to: 130.2.17.251
+  run_once: true
+
+- name: Notificar por correo que se publico el Checklist
+  mail:
+    host: 192.168.35.61
+    port: 25
+    subject: "Se publicó checklist de servidor(es) en la ruta compartida: {{ nombre }}"
+    body: 'Se publicó checklist de servidores en la ruta "\\130.2.17.251\Sis_Net_Servidores\SIS Infraestructura TI\06. Manuales e Instructivos\Estándares\Lineamientos Proyectos y Checklist\Checklist servidores entregados"'
+    from: ansible_infr@claro.com.ec
+    to:
+      - sis_infr_servidores@claro.com.ec
+  delegate_to: localhost
+  run_once: true
+
+
+

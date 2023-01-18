@@ -1,0 +1,9 @@
+---
+# tasks file for ./roles/weblogic-paqueteria
+- name: '[ INSTALACION DE PAQUETERIA PARA WEBLOGIC ]'
+  yum:
+    name: "{{ paquetesiso }}"
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS

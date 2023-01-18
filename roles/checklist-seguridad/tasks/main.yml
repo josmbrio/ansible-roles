@@ -1,0 +1,66 @@
+---
+- name: '[ CONFIGURAR LOGIN.DEFS PASS_MAX_DAYS ]'
+  lineinfile:
+    dest: '/etc/login.defs'
+    regexp: "PASS_MAX_DAYS"
+    line: "PASS_MAX_DAYS 45"
+
+- name: '[ CONFIGURAR LOGIN.DEFS PASS_MIN_DAYS ]'
+  lineinfile:
+    dest: '/etc/login.defs'
+    regexp: "PASS_MIN_DAYS"
+    line: "PASS_MIN_DAYS 20"
+
+- name: '[ CONFIGURAR LOGIN.DEFS PASS_MIN_LEN ]'
+  lineinfile:
+    dest: '/etc/login.defs'
+    regexp: "PASS_MIN_LEN"
+    line: "PASS_MIN_LEN 8"
+
+- name: '[ CONFIGURAR LOGIN.DEFS PASS_WARN_AGE ]'
+  lineinfile:
+    dest: '/etc/login.defs'
+    regexp: "PASS_WARN_AGE"
+    line: "PASS_WARN_AGE 30"
+
+- name: '[ CONFIGURAR USERADD INACTIVE ]'
+  lineinfile:
+    dest: '/etc/default/useradd'
+    regexp: "INACTIVE"
+    line: "INACTIVE=15"
+
+- name: '[ CONFIGURAR USERADD CREATE_MAIL_SPOOL ]'
+  lineinfile:
+    dest: '/etc/default/useradd'
+    regexp: "CREATE_MAIL_SPOOL"
+    line: "CREATE_MAIL_SPOOL=no"
+
+- name: '[ CONFIGURAR PROFILE TMOUT ]'
+  lineinfile:
+    dest: '/etc/profile'
+    regexp: "^TMOUT"
+    line: "TMOUT=1200"
+
+- name: '[ CONFIGURAR PROFILE EXPORT TIMEOUT ]'
+  lineinfile:
+    dest: '/etc/profile'
+    regexp: "^export TMOUT"
+    line: "export TMOUT"
+
+- name: '[ EDITAR SYSTEM-AUTH COMPLEJIDAD DE PASSWORD ]'
+  lineinfile:
+    dest: '/etc/pam.d/system-auth'
+    regexp: "password    requisite     pam_pwquality.so try_first_pass local_users_only retry=3 authtok_type="
+    line: "password    requisite     pam_cracklib.so try_first_pass retry=3 minlen=8 lcredit=-1 ucredit=-1 dcredit=-1 ocredit=-1"
+
+- name: '[ EDITAR SYSTEM-AUTH RECORDAR 3 ANTERIORES ]'
+  lineinfile:
+    dest: '/etc/pam.d/system-auth'
+    regexp: "password    sufficient    pam_unix.so sha512 shadow nullok try_first_pass use_authtok"
+    line: "password    sufficient    pam_unix.so md5 shadow nullok try_first_pass use_authtok remember=3"
+
+- name: '[ CONFIGURAR BANNER EN ARCHIVO SSHD ]'
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^Banner '
+    line: Banner /etc/issue

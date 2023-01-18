@@ -1,0 +1,103 @@
+---
+# tasks file for docker-instalacion
+
+- name: '[ MODIFICAR REPOSITORIO LOCAL PARA RHEL 7 ]'
+  yum_repository:
+    name: bastionREPO
+    file: bastionREPO
+    description: Repositorio local para RHEL 7
+    baseurl: 'http://10.202.21.9/RHEL/7.9'
+    gpgcheck: no
+    enabled: yes
+  when: ansible_facts['distribution_major_version'] == '7'
+
+- name: '[ MODIFICAR REPOSITORIO LOCAL PARA RHEL 7 EXTRAS ]'
+  yum_repository:
+    name: bastionREPO-7-extras
+    file: bastionREPO-7-extras
+    description: Repositorio local para RHEL 7
+    baseurl: 'http://10.202.21.9/RHEL/rhel-7-server-extras-rpms/Packages'
+    gpgcheck: no
+    enabled: yes
+  when: ansible_facts['distribution_major_version'] == '7'
+
+- name: '[ MODIFICAR REPOSITORIO LOCAL PARA RHEL 8 BASEOS ]'
+  yum_repository:
+    name: bastionREPOBO
+    file: bastionREPOBO
+    description: Repositorio local para RHEL 8
+    baseurl: 'http://10.202.21.9/RHEL/8.6/BaseOS/'
+    gpgcheck: no
+    enabled: yes
+  when: ansible_facts['distribution_major_version'] == '8'
+
+- name: '[ MODIFICAR REPOSITORIO LOCAL PARA RHEL 8 APPSTREAM ]'
+  yum_repository:
+    name: bastionREPOAS
+    file: bastionREPOAS
+    description: Repositorio local para RHEL 8
+    baseurl: 'http://10.202.21.9/RHEL/8.6/AppStream/'
+    gpgcheck: no
+    enabled: yes
+  when: ansible_facts['distribution_major_version'] == '8'
+
+
+- name: '[ CREAR REPOSITORIO PARA PAQUETES DOCKER ]'
+  yum_repository:
+    name: dockerREPO
+    file: dockerREPO
+    description: Repositorio apache para paquetes DOCKER
+    baseurl: http://10.202.21.9/DOCKER/rhel7
+    gpgcheck: no
+    enabled: yes
+  when: ansible_facts['distribution_major_version'] == '7'
+
+- name: '[ CREAR REPOSITORIO PARA PAQUETES DOCKER EN RHEL8 ]'
+  yum_repository:
+    name: dockerREPOrhel8
+    file: dockerREPOrhel8
+    description: Repositorio apache para paquetes DOCKER sobre rhel8
+    baseurl: http://10.202.21.9/DOCKER/rhel8
+    gpgcheck: no
+    enabled: yes
+  when: ansible_facts['distribution_major_version'] == '8'
+
+
+- name: "[ INSTALACION DE DOCKER RHEL 7]"
+  yum:
+    name: "{{item}}"
+    state: latest
+    disablerepo: "*"
+    enablerepo: bastionREPO,bastionREPO-7-extras,dockerREPO
+    disable_plugin: subscription-manager
+  with_items: "{{paquetesDocker}}"
+  when: ansible_facts['distribution_major_version'] == '7'
+
+  #- name: "[ INSTALACION DE PODMAN RHEL 8]"
+  #yum:
+  #    name: podman*
+  #    state: latest
+  #    disablerepo: "*"
+  #    enablerepo: bastionREPOBO,bastionREPOAS
+  #    disable_plugin: subscription-manager
+  #  when: ansible_facts['distribution_major_version'] == '8'
+
+- name: "[ REMOCIÓN DE PODMAN]"
+  yum:
+    name: "{{item}}"
+    state: absent
+  with_items: "{{desinstalar}}"
+  when: ansible_facts['distribution_major_version'] == '8'
+
+
+- name: "[ INSTALACION DE DOCKER RHEL 8]"
+  yum:
+    name: "{{item}}"
+    state: latest
+    disablerepo: "*"
+    enablerepo: bastionREPOBO,bastionREPOAS,dockerREPOrhel8
+    disable_plugin: subscription-manager
+  with_items: "{{paquetesDockerRhel8}}"
+  when: ansible_facts['distribution_major_version'] == '8'
+
+

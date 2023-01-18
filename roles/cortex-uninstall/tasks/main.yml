@@ -1,0 +1,11 @@
+---
+# tasks file for cortex-uninstall
+- name: Desinstalar Cortex por comando
+  command: /opt/traps/scripts/uninstall.sh -n --force-manual
+
+- name: Desinstalar  Cortex rpm
+  yum:
+    name: cortex-agent
+    state: removed
+    disable_plugin: subscription-manager,rhnplugin
+    disablerepo: '*'

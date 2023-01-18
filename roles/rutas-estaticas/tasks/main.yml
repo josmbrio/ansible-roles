@@ -1,0 +1,6 @@
+---
+- name: "AGREGA UNA RUTA ESTÁTICA"
+  ansible.netcommon.net_static_route:
+    prefix: 200.80.239.70
+    mask: 255.255.255.255
+    next_hop: 10.202.56.254

@@ -1,0 +1,39 @@
+---
+# tasks file for oracle19-paquetes
+- name: '[ TRANSFERIR ARCHIVOS ORACLEASMLIB ORACLEASMSUPPORT KMOD-ORACLEASM ]'
+  synchronize:
+    src: "{{ item }}"
+    dest: /root/paquetes-oracle/
+  with_items: "{{ paquetesOracle19 }}"
+
+- name: '[ INSTALACION DE PAQUETES ORACLE 19C ]'
+  yum:
+    name: '{{ paquetesOracle19Ruta }}'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+
+- name: '[ INSTALACION DE PAQUETES DE AMBIENTE GRAFICO ORACLE 19C ]'
+  yum:
+    name: '{{ paquetesGraficoOracle19 }}'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+
+- name: '[ INSTALACION DE PAQUETES BINARIO FUSER ORACLE 19C ]'
+  yum:
+    name: '{{ paquetesBinarioOracle19 }}'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+
+- name: '[ INSTALACION DE PAQUETES BASE ORACLE 19C ]'
+  yum:
+    name: '{{ paquetesBaseOracle19 }}'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS

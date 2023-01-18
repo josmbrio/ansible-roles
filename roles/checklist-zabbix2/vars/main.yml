@@ -1,0 +1,12 @@
+---
+paquetesiso:
+  - pcre
+  - pcre-devel
+paquetesopcionales:
+  - 'zabbix-agent-3.2.0-1.el7.x86_64.rpm'
+paquetesopcionales2:
+  - 'zabbix-5.2.1.tar.gz'
+  - 'go1.15.5.linux-amd64.tar.gz'
+paquetesopcionales2ruta:
+  - '/root/opcionales/zabbix-5.2.1.tar.gz'
+  - '/root/opcionales/go1.15.5.linux-amd64.tar.gz'

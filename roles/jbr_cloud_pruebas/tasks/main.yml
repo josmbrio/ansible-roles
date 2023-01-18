@@ -1,0 +1,17 @@
+---
+#- name: '[ PRUEBAS ]'
+#  os_server:
+#    state: present
+#    auth_url: https://prvgye1srvcenter.claro.cloud
+#    username: jbrionev
+#    password: Tranfugo..2022
+#    project_name: test 
+
+- name: 'PRUEBAS'
+  cloud: test
+  server: *
+  filters:
+    vm_state: active
+  register: result
+- debug: 
+    msg: "{{ result.openstack_servers }}"

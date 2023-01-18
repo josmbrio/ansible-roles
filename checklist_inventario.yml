@@ -1,0 +1,152 @@
+---
+- hosts: '{{servidor}}'
+  gather_facts: yes
+  vars_prompt:
+    - name: servidor
+      prompt: "¿En que servidor o grupo de servidores?"
+      private: no
+    - name: datacenter_id
+      prompt: "\n==> Datacenter Id: \n
+Posibles valores: \n
+  323fbe57-1db5-e3a8-0f85-ce8bf96cbff5  UIO          \n
+  34d43f0b-b130-dcb8-b22e-bf9815db5cc0  Durán 103    \n
+  47c34a9a-0373-a33b-96c0-478d1fbb7da1  INCA         \n
+  68c01dbe-759b-e832-9a8e-15982ec35870  Esteros      \n
+  68f7a20d-b339-117e-bfe4-df49db60e554  TEC_R2       \n
+  8247bdfb-8e48-e7b1-4d1f-3a4f34589c80  Santa Leonor \n
+  90002e07-d3eb-cd98-c2d1-97ba69ac6f8b  Durán 101    \n
+  c9dea61b-62c9-d40a-444b-aae20e97ec76  Mapasingue   \n
+  d5a5fb33-4a22-fda7-31ff-4dc8658a1cc0  TEC_R1       \n
+  e749eb55-7f63-1691-3125-3ccbb2f67bfa  Durán 105    \n
+  f08760fa-0337-903b-fee6-c5bc0bcab124  ETECO        \n
+  f8228334-de81-262c-8276-027a656e2aa9  CENTRUM      \n
+"
+      private: no
+    - name: vdc_id
+      prompt: "\n==> VDC Id: \n
+Posibles valores: \n
+  08e9f1db-de3e-8f93-b9fb-e0fac19ac489  Duran - NonCriticalApps         \n
+  08f5d05e-dba5-586d-30b2-ee42b6319eec  Duran - SOA_ONE_AMX_Desa        \n
+  2f3ff121-f472-b591-9521-3d8c4ccb3e74  Centrum - VMwareCluster-Gen09   \n
+  30c9b49d-dfe5-6fc1-c7e0-f385ecb79ece  Centrum - VMwareCluster01       \n
+  49511f1a-81ca-fd94-4ea6-bd690c785f02  CLOUD UIO - SIS_NOCRITICAS      \n
+  5590f7db-439b-d2b6-933e-76bc4192953f  Duran - NonCriticalDB           \n
+  679edd87-7e6d-ae3d-e55f-cfd95390267e  ECUTEL - ClusterPureSystem      \n
+  6ac55df6-6267-e658-ec34-85650283c77b  CLOUD - SIS_DB                  \n
+  6d7d831c-3d81-bc57-e58d-73fb734087b7  Duran - pgdcvdesxi01.porta.corp \n
+  7310939f-b372-2a73-92fc-78f25bba840e  Duran - VMwareMgmt              \n
+  7fe94dbe-a16b-4199-387c-3504cbda0597  CLOUD - SIS_DESARROLLO          \n
+  8a65426c-85cb-d992-6488-abb0431bcd9f  CLOUD - SIS_CRITICAS            \n
+  94ace8ac-f05d-902c-b416-ce5799181021  CLOUD UIO - SIS_CRITICAS        \n
+  984fc2b2-fcff-9b3c-211a-f38d60a9a06d  Duran - pgdcesxi04.porta.corp   \n
+  a22f1129-86f8-630a-0651-f08af586595e  Duran - CriticalApps            \n
+  a42c65ff-e93a-1836-2a6f-56e736a614da  CLOUD - SIS_NOCRITICAS          \n
+  e9173f7f-f1c6-e662-8b80-789b868ebee1  Duran - SOA_ONE_AMX             \n
+  ea6707fb-ae2c-e20e-6d62-eb5eff1e444b  Duran - CLARO-VSPHERE-DESA      \n
+"
+      private: no
+    - name: fila
+      prompt: "\n==> Fila: "
+      default: "n/a"
+      private: no
+    - name: rack
+      prompt: "\n==> Rack: "
+      default: "n/a"
+      private: no
+    - name: unidad
+      prompt: "\n==> Unidad: "
+      default: "n/a"
+      private: no
+    - name: bahia
+      prompt: "\n==> Bahia: "
+      default: "n/a"
+      private: no
+    - name: estado
+      prompt: "\n==> Estado:  \n
+Posibles valores: \n
+  Encendido \n
+  Apagado \n
+  Dado_de_baja \n
+"
+      default: "Encendido"
+      private: no
+    - name: clasificacion_id
+      prompt: "\n==> Clasificacion Id: \n
+Posibles valores: \n
+  0177d7da-e8d9-9035-a18b-786e1d11792c  Servidor blade \n
+  042ffd59-6a6c-008e-d274-62506a56c882  Caja           \n
+  133a7cd8-aa2d-a75b-76d1-9dbccf89c62a  VSP            \n
+  44aa43fa-a9bf-0b43-0646-7bc35c4a5d7c  Librería       \n
+  45612c6f-fc7c-4cd2-97cc-c07fd0e86188  Controladora   \n
+  4da814f2-bc5e-1a6c-bed6-c77ad0b7e8da  SuperDome      \n
+  4f098b03-6803-a2db-9017-1f22d5e82810  SAN switch     \n
+  7196b644-20d6-4ae6-afe6-735e7f91024d  Balanceador    \n
+  83ea62c1-cb24-758e-81b5-44838f9c68c1  Checkpoint     \n
+  9be66a00-e93b-cc5c-0ebf-9a1707db2b35  Storage        \n
+  a5e9d79d-afd8-f869-fa41-3e3304f67e56  Servidor       \n
+  a9ca9f5c-674f-d6db-9ca6-449fd31b6524  Consola        \n
+  b4807611-80d3-9d84-4d65-8eeff7a14874  Enclosure      \n
+  d4b6c77c-8dfd-5d73-4e93-e17f5896ac1b  KVM            \n
+  e0ec20b1-fc31-e1af-5434-c0b89cbcc617  F5             \n
+  e5eef76b-c9ea-8bda-0259-f0213fd7f51d  VPAR           \n
+  eba05870-094a-5b36-9ac4-226c38b70bc2  Switch         \n
+"
+      private: no
+    - name: tipo
+      prompt: "\n==> Tipo: \n
+Posibles valores: \n
+  Fisico \n
+  Virtual \n
+"
+      default: Virtual
+      private: no
+    - name: hypervisor
+      prompt: "\n==> Hypervisor: \n
+Posibles valores: \n
+  VMWare \n
+  KVM \n
+  FusionCompute \n
+"
+      default: VMWare
+      private: no
+    - name: contenedor
+      prompt: "\n==> Contenedor: "
+      default: "n/a"
+      private: no
+    - name: descripcion
+      prompt: "\n==> Descripcion/Notas:"
+      private: no
+    - name: marca_id
+      private: no
+      prompt: "\n==> Marca Id: \n
+Posibles valores: \n
+  01647574-4521-77e0-b4a2-dc92e5deb258  HUAWEI     \n
+  09c838a1-3490-ce1a-3beb-4fe8a7f072d8  F5         \n
+  12769f4b-7100-746c-2fa4-6bb599cd8853  HITACHI    \n
+  1c44e23f-8986-bf75-8570-4187439cb28c  HP         \n
+  1e9e6ba6-5215-93c8-32fd-8aa87e771504  SUN        \n
+  30695ecc-ec23-519f-369c-f7902e197ff4  XEN        \n
+  3d280436-9cc1-5f11-bf0a-a66acf44dc42  EMC        \n
+  52be03cb-366f-2db5-fa51-5a7184d51d2d  CISCO      \n
+  59261d9d-df65-5502-84f2-16b9de412bf0  DIALOGIC   \n
+  9a57eb4f-6fbb-b255-b6e4-15a189868cf1  KVM        \n
+  ad220140-8151-f898-c6d7-c2d6e0fdfc68  Oracle     \n
+  b0d939e7-c14d-e8a4-4781-8fab99ae23ff  NETAPP     \n
+  b5b8f119-e74c-abee-b550-eb6196cf3712  HiperV     \n
+  c4b331a1-1ee4-2418-7a39-3cd22c2ace52  HP         \n
+  d2dd300a-2660-4c84-1f62-cafddb9b2e22  VMWare     \n
+  ec3bd9d6-471e-dd24-4abf-08c3635964b2  Checkpoint \n
+  f73f1155-602e-38e3-69f4-e01e876e5a3e  IBM        \n
+"
+    - name: numero_parte
+      prompt: "\n==> Numero de Parte: "
+      default: "n/a"
+      private: no
+    - name: ipadm
+      prompt: "\n==> IP de administracion (iLO, iBMC, ManageOne)"
+      private: no
+      default: "https://10.191.217.144"
+
+- roles:
+    - {role: inventario-ingresar}
+

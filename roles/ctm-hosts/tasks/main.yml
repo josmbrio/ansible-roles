@@ -1,0 +1,11 @@
+---
+- name: "[ EDITAR ARCHIVO DE HOSTS P1 ]"
+  lineinfile:
+    dest: '/etc/hosts'
+    regexp: "pgdcctrlm"
+    line: "130.2.16.161    pgdcctrlm"
+- name: "[ EDITAR ARCHIVO DE HOSTS P2 ]"
+  lineinfile:
+    dest: '/etc/hosts'
+    regexp: "pgdcctrlmfo"
+    line: "130.2.16.162    pgdcctrlmfo"

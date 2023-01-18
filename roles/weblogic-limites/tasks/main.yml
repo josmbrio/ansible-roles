@@ -1,0 +1,34 @@
+---
+# tasks file for ./roles/weblogic-limites
+- name: '[ CREAR ARCHIVO 90NPROC ]'
+  copy:
+    src: 90-nproc.conf
+    dest: /etc/security/limits.d/
+
+- name: '[ NOFILE SOFT ]'
+  pam_limits:
+    domain: '*'
+    limit_type: soft
+    limit_item: nofile
+    value: 4096
+
+- name: '[ NOFILE HARD ]'
+  pam_limits:
+    domain: '*'
+    limit_type: hard
+    limit_item: nofile
+    value: 65536
+
+- name: '[ NOPROC SOFT ]'
+  pam_limits:
+    domain: '*'
+    limit_type: soft
+    limit_item: nproc
+    value: 2047
+
+- name: '[ NOPROC HARD ]'
+  pam_limits:
+    domain: '*'
+    limit_type: hard
+    limit_item: nproc
+    value: 16384

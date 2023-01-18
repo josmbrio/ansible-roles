@@ -1,0 +1,60 @@
+---
+# tasks file for docker-permisos
+- name: "[ MODIFICAR GID DE GRUPO DOCKER ]"
+  group:
+    name: docker
+    gid: 2000
+    state: present
+
+- name: "[ CREAR USUARIO DOCKER ]"
+  user:
+    name: docker
+    uid: 2000
+    shell: /bin/bash
+    group: docker
+    password: $6$rounds=656000$mysecretsalt$rh1OY4HVnKshpwgeK0DSaUDkE3LhJdC8FVKiby8KjWa/lic.3sPx0KdQtaMv.vytP3Zr8hLnf3SF98sX05IOy1 
+
+- name: "[ CREAR USUARIO ARQSIS ]"
+  user:
+    name: arqsis
+    shell: /bin/bash
+    password: $6$rounds=656000$mysecretsalt$/HfEx2ipa6NCGBKRsdFu/OvmpOg6UEmkGmCh82b3HEp5oN8dOPaW1Hqq7UxuD8F7ECGoLDN92CP2MpxvkvoUJ1 
+
+- name: "[ CAMBIO DE CONTRASENA EN PRIMER LOGIN DE ARQSIS]"
+  command: passwd -e arqsis
+
+- name: '[ CONFIGURAR NAMESPACE SUBUID ]'
+  lineinfile:
+    path: /etc/subuid
+    regexp: '^docker'
+    line: docker:2000:65536
+
+- name: '[ CONFIGURAR NAMESPACE SUBGID ]'
+  lineinfile:
+    path: /etc/subgid
+    regexp: '^docker'
+    line: docker:2000:65536
+
+- name: "[ PROPIETARIO EN CARPETA DOCKER]"
+  file:
+    path: /docker
+    group: docker
+    state: touch
+
+- name: "[ PROPIETARIO EN CARPETA DOCKER/APPS ]"
+  file:
+    path: /docker/apps
+    owner: docker
+    group: docker
+    mode: g+rwx
+    state: touch
+ 
+- name: "[ ACL EN DOCKER/APPS ]"
+  acl:
+    path: /docker/apps
+    entity: docker
+    etype: group
+    permissions: rwx
+    default: yes
+    recursive: yes
+    state: present 

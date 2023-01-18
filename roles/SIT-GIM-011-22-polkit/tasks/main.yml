@@ -1,0 +1,101 @@
+
+- name: Validar vulnerabilidades
+  script: roles/validacion-SIT-GIM-011-22-polkit/files/cve-2021-4034--2022-01-25-0936.sh
+  register: result
+
+- name: Resultado de Validacion
+  debug:
+    var: result.stdout
+
+- name: Evaluar variable accion
+  fail:
+    msg: "No se aprobó ninguna acción. Variable accion={{accion}}"
+  when: accion == 'validar'
+
+- name: Crear repositorio con paquetes acualizados
+  block:
+
+  - name: '[ CREACION DE REPOSITORIO REMOTO POLKIT PARA RHEL 6 ]'
+    import_tasks: crearepo.yml
+    when: ansible_facts['distribution_major_version'] == '6'
+    vars:
+      repo_name: "{{ repo_polkit_name }}"
+      repo_baseurl: "{{ repo_polkit_baseurl_rhel6 }}"
+      repo_desc: "{{ repo_polkit_description_rhel6 }}"
+
+  - name: '[ CREACION DE REPOSITORIO DE OS PARA RHEL 6 ]'
+    import_tasks: crearepo.yml
+    when: ansible_facts['distribution_major_version'] == '6'
+    vars:
+      repo_name: "{{ repo_os_name_rhel_6_7 }}"
+      repo_baseurl: "{{ repo_os_baseurl_rhel_6 }}"
+      repo_desc: "{{ repo_os_description_rhel_6 }}"
+
+  - name: '[ CREACION DE REPOSITORIO REMOTO POLKIT PARA RHEL 7 ]'
+    import_tasks: crearepo.yml
+    when: ansible_facts['distribution_major_version'] == '7'
+    vars: 
+      repo_name: "{{ repo_polkit_name }}"
+      repo_baseurl: "{{ repo_polkit_baseurl_rhel7 }}"
+      repo_desc: "{{ repo_polkit_description_rhel7 }}"
+
+
+  - name: '[ CREACION DE REPOSITORIO DE OS PARA RHEL 7 ]'
+    import_tasks: crearepo.yml
+    when: ansible_facts['distribution_major_version'] == '7'
+    vars:
+      repo_name: "{{ repo_os_name_rhel_6_7 }}"
+      repo_baseurl: "{{ repo_os_baseurl_rhel_7 }}"
+      repo_desc: "{{ repo_os_description_rhel_7 }}"
+
+  - name: '[ CREACION DE REPOSITORIO REMOTO POLKIT PARA RHEL 8 ]'
+    import_tasks: crearepo.yml
+    when: ansible_facts['distribution_major_version'] == '8'
+    vars:
+      repo_name: "{{ repo_polkit_name }}"
+      repo_baseurl: "{{ repo_polkit_baseurl_rhel8 }}"
+      repo_desc: "{{ repo_polkit_description_rhel8 }}"
+
+  - name: '[ CREACION DE REPOSITORIO DE SO PARA RHEL 8 BASEOS ]'
+    import_tasks: crearepo.yml
+    when: ansible_facts['distribution_major_version'] == '8'
+    vars:
+      repo_name: "{{ repo_os_base_name_rhel8 }}"
+      repo_baseurl: "{{ repo_os_base_baseurl_rhel8 }}"
+      repo_desc: "{{ repo_os_base_description_rhel_8 }}"
+
+
+  - name: '[ CREACION DE REPOSITORIO DE SO PARA RHEL 8 APPSTREAM ]'
+    import_tasks: crearepo.yml
+    when: ansible_facts['distribution_major_version'] == '8'
+    vars:
+      repo_name: "{{ repo_os_apps_name_rhel8 }}"
+      repo_baseurl: "{{ repo_os_apps_baseurl_rhl8 }}"
+      repo_desc: "{{ repo_os_apps_description_rhel_8 }}"
+
+  when: "( 'This polkit version is vulnerable' in result.stdout ) and accion == 'crear_repo'"
+
+
+- name: Parchar Polkit
+  block:
+  - name: '[ ACTUALIZAR POLKIT EN RHEL 6 Y 7]'
+    import_tasks: update.yml
+    when: "( ansible_facts['distribution_major_version'] == '6' or ansible_facts['distribution_major_version'] == '7' )"
+    vars:
+      repos:
+      - "{{ repo_polkit_name }}"
+      - "{{ repo_os_name_rhel_6_7 }}"
+      packages: 'polkit*'
+
+  - name: '[ ACTUALIZAR POLKIT EN RHEL 8 ]'
+    import_tasks: update.yml
+    when: ansible_facts['distribution_major_version'] == '8'
+    vars:
+      repos:
+      - "{{ repo_polkit_name }}"
+      - "{{ repo_os_apps_name_rhel8 }}"
+      - "{{ repo_os_base_name_rhel8 }}"
+      packages: 'polkit*'
+
+  when: "( 'This polkit version is vulnerable' in result.stdout ) and accion == 'parchar'"
+

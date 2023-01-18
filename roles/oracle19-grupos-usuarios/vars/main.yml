@@ -1,0 +1,25 @@
+---
+# vars file for oracle19-grupos-usuarios
+dbagroups:
+  oinstall: 54321
+  dba: 54322
+  asmdba: 54323
+  asmoper: 54324
+  asmadmin: 54325
+  oper: 54326
+  backupdba: 54327
+  dgdba: 54328
+  kmdba: 54329
+dbausers:
+  oracle:
+    uid: 54321
+    gid: 'oinstall'
+    groups: 'dba, oper, asmdba, asmoper, backupdba, dgdba, kmdba'
+  grid:
+    uid: 54322
+    gid: 'oinstall'
+    groups: 'dba, asmadmin, asmdba, asmoper'
+  respaldo:
+    uid: 54323
+    gid: 'oinstall'
+    groups: 'dba'

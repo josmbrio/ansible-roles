@@ -1,0 +1,12 @@
+---
+- name: "[ TRANSFERIR PAQUETES PARA INSTALACION ]"
+  synchronize:
+    src: "{{ item }}"
+    dest: /root/personalizado/
+  with_items: "{{ paquete }}"
+
+- name: "[ INSTALACION DE PAQUETE ]"
+  yum:
+    name: "/root/personalizado/{{ item }}"
+    state: present
+  with_items: "{{ paquete }}"

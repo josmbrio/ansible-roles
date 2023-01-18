@@ -1,0 +1,47 @@
+---
+- name: '[ INSTALACION DE PAQUETES PARA BASE DE DATOS ]'
+  yum:
+    name: '{{ paquetesbase }}'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+  ignore_errors: yes
+
+- name: '[ INSTALACION DE PAQUETES RHEL 7 PARA BASE DE DATOS ]'
+  yum:
+    name: '{{ paquetesbase7 }}'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+  ignore_errors: yes
+  when: ansible_facts['distribution_major_version'] == '7'
+
+- name: '[ INSTALACION DE PAQUETES RHEL 8 PARA BASE DE DATOS ]'
+  yum:
+    name: '{{ paquetesbase8 }}'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+  ignore_errors: yes
+  when: ansible_facts['distribution_major_version'] == '8'
+
+  #- name: "[ TRANSFERIR PAQUETES OPCIONALES PARA INSTALACION ]"
+  #synchronize:
+  #  src: '{{ item }}'
+  #  dest: /root/dba-paquetes/
+  #with_items: '{{ paquetesadicionales8 }}'
+  #when: ansible_facts['distribution_major_version'] == '8'
+ 
+  # - name: '[ INSTALACION DE PAQUETES OPCIONALES ]'
+  #yum:
+  #  name: '/root/dba-paquetes/{{item}}'
+  #  state: present
+  #  disable_plugin: '*'
+  #  disablerepo: '*'
+  #  enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+  #with_items: '{{ paquetesadicionales8 }}'
+  #when: ansible_facts['distribution_major_version'] == '8'
+

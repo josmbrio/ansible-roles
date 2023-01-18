@@ -1,0 +1,46 @@
+---
+# tasks file for cortex
+
+- name: Crear directorio panw
+  ansible.builtin.file:
+    path: /etc/panw
+    state: directory
+    mode: '0755'
+
+- name: Copiar archivo de configuracion
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/panw/cortex.conf
+  with_fileglob: "roles/cortex-install/files/cortex.conf"
+
+- name: Copiar instalador de Cortex
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /tmp
+  with_fileglob: "roles/cortex-install/files/cortex-*.rpm"
+
+- name: Instalar Cortex (RHEL 7)
+  yum:
+    name: "{{ item }}"
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO
+  when: ansible_facts['distribution_major_version'] == '7'
+  with_fileglob: "/tmp/cortex-*.rpm"
+
+- name: Instalar Cortex (RHEL 8)
+  yum:
+    name: "{{ item }}"
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPOBO,bastionREPOAS
+  when: ansible_facts['distribution_major_version'] == '8'
+  with_fileglob: "/tmp/cortex-*.rpm"
+
+- name: Elminar instalador
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_fileglob: "/tmp/cortex-*.rpm"

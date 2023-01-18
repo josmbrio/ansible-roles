@@ -1,0 +1,33 @@
+---
+#- name: '[ INSTALACION DE MULTIPATH ]'
+#  yum:
+#    name: device-mapper-multipath
+#    state: present
+#    disable_plugin: '*'
+#    disablerepo: '*'
+#    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+
+- name: '[ CONFIGURAR MULTIPATH CON HUAWEI]'
+  synchronize:
+    src: multipath-huawei.conf
+    dest: /etc/
+  when: storage == '1'
+
+- name: '[ RENOMBRAR MULTIPATH CON HUAWEI]'
+  command: mv /etc/multipath-huawei.conf /etc/multipath.conf
+  when: storage == '1'
+
+- name: '[ CONFIGURAR MULTIPATH CON 3PAR HP]'
+  synchronize:
+    src: multipath-3parhp.conf
+    dest: /etc/
+  when: storage == '2'
+
+- name: '[ RENOMBRAR MULTIPATH CON 3PAR]'
+  command: mv /etc/multipath-3parhp.conf /etc/multipath.conf
+  when: storage == '2'
+
+  #- name: '[ REINICIAR MULTIPATH ]'
+  #service:
+  #  name: multipathd
+  #  state: restarted

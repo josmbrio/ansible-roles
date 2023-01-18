@@ -1,0 +1,131 @@
+---
+- hosts: '{{servidor}}'
+  gather_facts: yes
+  vars_prompt:
+    - name: servidor
+      prompt: "En que grupo de servidores?"
+      private: no
+      default: "localhost"
+      private: no
+    - name: datacenter
+      prompt: "\n==> Datacenter: \n
+Posibles valores: \n
+   CENTRUM \n
+   Durán 101 \n
+   Durán 103 \n
+   Durán 105 \n
+   Esteros \n
+   Mapasingue \n
+   Santa Leonor \n
+   TEC_R1 \n
+   TEC_R2 \n
+   ETECO \n
+   INCA \n
+   UIO \n
+"
+      default: "Duran 103"
+      private: no
+    - name: VDC
+      prompt: "\n==> VDC: \n
+Posibles valores: \n
+  Centrum - VMwareCluster01 \n
+  Centrum - VMwareCluster-Gen09 \n
+  CLOUD - SIS_CRITICAS \n
+  CLOUD - SIS_DB \n
+  CLOUD - SIS_DESARROLLO \n
+  CLOUD - SIS_NOCRITICAS \n
+  Duran - CLARO-VSPHERE-DESA \n
+  Duran - CriticalApps \n
+  Duran - NonCriticalApps \n
+  Duran - NonCriticalDB \n
+  Duran - pgdcesxi04.porta.corp \n
+  Duran - pgdcvdesxi01.porta.corp \n
+  Duran - SOA_ONE_AMX \n
+  Duran - SOA_ONE_AMX_Desa \n
+  Duran - VMwareMgmt \n
+  Mapasingue - ClusterPureSystem \n
+"
+      private: no
+    - name: fila
+      prompt: "\n==> Fila: "
+      default: "n/a"
+      private: no
+    - name: rack
+      prompt: "\n==> Rack: "
+      default: "n/a"
+      private: no
+    - name: unidad
+      prompt: "\n==> Unidad: "
+      default: "n/a"
+      private: no
+    - name: bahia
+      prompt: "\n==> Bahia: "
+      default: "n/a"
+      private: no
+    - name: estado
+      prompt: "\n==> Estado:  \n
+Posibles valores: \n
+  Encendido \n
+  Apagado \n
+  Dado_de_baja \n
+"
+      default: "Encendido"
+      private: no
+    - name: clasificacion
+      prompt: "\n==> Clasificacion: \n
+Posibles valores: \n
+  Balanceador \n
+  Caja \n
+  Enclosure \n
+  KVM \n
+  Servidor \n
+  Servidor blade \n
+  Storage \n
+  SuperDome \n
+  VPAR \n
+  Checkpoint \n
+  SAN switch \n
+  Librería \n
+  VSP \n
+  Switch \n
+  F5 \n
+  Controladora \n
+  Consola \n
+"
+      default: Servidor
+      private: no
+    - name: tipo
+      prompt: "\n==> Tipo: \n
+Posibles valores: \n
+  Fisico \n
+  Virtual \n
+"
+      default: Virtual
+      private: no
+    - name: hypervisor
+      prompt: "\n==> Hypervisor: \n
+Posibles valores: \n
+  VMWare \n
+  KVM \n
+  FusionCompute \n
+"
+      default: VMWare
+      private: no
+    - name: contenedor
+      prompt: "\n==> Contenedor: "
+      default: "n/a"
+      private: no
+    - name: descripcion
+      prompt: "\n==> Descripcion:"
+      private: no
+    - name: ipadm
+      prompt: "\n==> IP de administracion (iLO, iBMC, ManageOne)"
+      private: no
+      default: "10.191.217.144"
+    - name: correo_adicional
+      prompt: "\n==> La solicitud se enviará a acordovd@claro.com.ec. ¿Algun email adicional?: "
+      default: ""
+      private: no
+
+  roles:
+    - {role: solicitud_inventario}

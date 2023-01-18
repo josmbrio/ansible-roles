@@ -1,0 +1,23 @@
+---
+# tasks file for docker-configuracion
+
+- name: "[ TRANSFERIR ARCHIVO DE CONFIGURACION DOCKER ]"
+  synchronize:
+    src: "roles/docker-configuracion/files/daemon.json"
+    dest: /etc/docker/
+
+- name: '[ HABILITAR DOCKER EN BOOTEO]'
+  systemd:
+    name: docker
+    state: stopped
+    enabled: yes
+
+# Aqui debe haber una tarea que se descargeue el ultimo Docker Compose de esta ruta:
+# http://github.com/docker/compose/releases/download/1.23.2/docker-compose-Linux-x86_64
+
+- name: "[ TRANSFERIR BINARIO DE DOCKER COMPOSE ]"
+  copy:
+    src: roles/docker-configuracion/files/docker-compose-Linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: u+x,g+x,o+x
+

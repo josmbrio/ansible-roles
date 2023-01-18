@@ -1,0 +1,10 @@
+---
+- name: Fetch a qkview from the remote device
+  bigip_qkview:
+    asm_request_log: yes
+    dest: "{{ 'ansible_hostname' }}.qkview"
+    provider:
+      password: clbf5big-ipApp2019cloud
+      server: 10.183.3.3
+      user: root
+  delegate_to: localhost

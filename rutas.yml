@@ -1,0 +1,10 @@
+---
+- hosts: '{{servidor}}'
+  gather_facts: yes
+  vars_prompt:
+    - name: servidor
+      prompt: "En que servidor?"
+      private: no
+      default: "localhost"
+  roles:
+    - {role: rutas-estaticas, tags: rutas}

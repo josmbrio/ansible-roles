@@ -1,0 +1,12 @@
+- name: '[ TRANSFERIR JDK ]'
+  synchronize:
+    src: 'jdk-11.0.17_linux-x64_bin.rpm'
+    dest: /root/jdk/
+
+- name: '[ INSTALACION DE JDK ]'
+  yum:
+    name: '/root/jdk/jdk-11.0.17_linux-x64_bin.rpm'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS

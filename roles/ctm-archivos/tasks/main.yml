@@ -1,0 +1,13 @@
+---
+- name: '[ COPIAR SCRIPTS EN EL HOME DEL USUARIO AGENTCTM ]'
+  synchronize:
+    src: Linux-x86_64
+    dest: /controlm/agentctm/
+- name: '[ COPIAR XML EN EL HOME DEL USUARIO AGENTCTM ]'
+  synchronize:
+    src: silent.xml
+    dest: /controlm/agentctm/
+- name: '[ COPIAR PAKAI EN EL HOME DEL USUARIO AGENTCTM ]'
+  synchronize:
+    src: PAKAI.8.0.00.400_Linux-x86_64_INSTALL.BIN
+    dest: /controlm/agentctm/

@@ -1,0 +1,13 @@
+- name: '[ TRANSFERIR VALIDADOR ]'
+  synchronize: 
+    src: "{{ verificador }}"
+    dest: /root/validador/
+
+- name: '[ EJECUTAR VALIDADOR ]'
+  shell: '/root/validador/verificarChecklist.sh > /root/validador/{{ ansible_hostname }}_checklist.txt'
+
+- name: 
+  fetch:
+    src: '/root/validador/{{ ansible_hostname }}_checklist.txt'
+    dest: '/etc/ansible/'
+    flat: yes

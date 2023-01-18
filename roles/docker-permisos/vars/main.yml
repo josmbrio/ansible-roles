@@ -1,0 +1,7 @@
+---
+# vars file for docker-permisos
+
+usuarios:
+  - msacloud
+  - arqsis
+

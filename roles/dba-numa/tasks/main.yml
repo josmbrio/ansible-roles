@@ -1,0 +1,3 @@
+---
+- name: "DESHABILITAR NUMA"
+  shell: grubby --args "numa=off" --update-kernel $(grubby --default-kernel)

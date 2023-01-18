@@ -1,0 +1,8 @@
+---
+  - name: Version de Polkit
+#    shell: echo "host-ip $HOSTNAME $SSH_CONNECTION" | awk '{print $1" "$2" "$5}' 
+    shell: sed -i -e 's/.*from/from/g' -e 's/lookup/table/g' -e '/table local/d' -e '/table main/d' -e '/table default/d' /root/Rutas.bck 
+    register: command_output
+
+  - debug: 
+      msg="{{ command_output.stdout_lines }}"

@@ -1,0 +1,19 @@
+---
+- name: "[ TRANSFERIR PAQUETES ASM INSTALACION ]"
+  synchronize:
+    src: "{{ item }}"
+    dest: /root/asm/
+  with_items: "{{paquetesasmrpm}}"
+  when: ansible_facts['distribution_major_version'] == '7'
+
+- name: '[ INSTALACION DE PAQUETES ASM RPM]'
+  command: rpm -Uvh /root/asm/*.rpm --force
+  when: ansible_facts['distribution_major_version'] == '7'
+
+- name: '[ INSTALACION DE PAQUETES ASM ]'
+  yum:
+    name: "{{ paquetesasm }}"
+    state: present
+    disablerepo: "*"
+    enablerepo: bastionREPO
+  when: ansible_facts['distribution_major_version'] == '7'

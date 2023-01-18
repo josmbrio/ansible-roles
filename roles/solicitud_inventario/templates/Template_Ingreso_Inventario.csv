@@ -1,0 +1,2 @@
+datacenter;VDC;fila;rack;unidad;bahia;estado;clasificacion;tipo;hypervisor;contenedor;hostname;sistemaOperativo;descripcion;memoriaRam;cpu;marca;modelo;numeroSerie;numeroParte;Ips;ipadm
+{{ datacenter }};{{ VDC }};{{ fila }};{{ rack }};{{ unidad }};{{ bahia }};{{ estado }};{{ clasificacion }};{{ tipo }};{{ hypervisor }};{{ contenedor }};{{ hostname }};{{ sistemaOperativo }};{{ descripcion }};{{ memoriaRam }};{{ cpu }};{{ marca }};{{ modelo }};{{ numeroSerie }};{{ numeroParte }};{{ Ips }};{{ ipadm }}

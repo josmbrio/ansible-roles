@@ -1,0 +1,9 @@
+---
+# tasks file for ./roles/weblogic-kernel
+- name: CONFIGURACIONES DE SEGURIDAD
+  sysctl:
+    name: 'kernel.shmmax'
+    value: '4294967295'
+    state: present
+    ignoreerrors: yes
+    reload: yes

@@ -1,0 +1,52 @@
+---
+- name: '[ INSTALACION DE PERREQUISITOS PARA RHEL 8 ]'
+  yum:
+    name: 'libnsl, ksh'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+  when: ansible_facts['distribution_major_version'] == '8'
+
+- name: '[ TRANSFERIR PAQUETES LEGADO PARA INSTALACION RHEL 8 ]'
+  synchronize:
+    src: "{{ item }}"
+    dest: /root/legado/
+  with_items: "{{ paquetelegado8 }}"
+  when: ansible_facts['distribution_major_version'] == '8'
+
+- name: '[ INSTALACION DE PAQUETES LEGADO PARA RHEL 8 ]'
+  yum:
+    name: '{{ paquetelegado8ruta }}'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+  when: ansible_facts['distribution_major_version'] == '8'
+
+- name: '[ CAMBIAR PERMISOS ]'
+  file:
+    dest: /controlm/agentctm/
+    mode: 0777
+    recurse: yes
+
+- name: '[ INSTALACION DESATENDIDA ]'  
+  shell:
+    chdir: /controlm/agentctm
+    cmd: ./Linux-x86_64/setup.sh -silent silent.xml
+  environment:
+    INSTALL_AGENT_LINUX_X86_64: Y
+
+- name: '[ BAJAR SERVICIO ]'
+  shell:
+    chdir: /controlm/agentctm/ctm/scripts/
+    cmd: (echo; echo;) | ./shut-ag
+
+- name: '[ INSTALACION DE ACTUALIZACION ]'
+  shell:
+    chdir: /controlm/agentctm
+    cmd: (echo y;) | ./PAKAI.8.0.00.400_Linux-x86_64_INSTALL.BIN
+  environment:
+    CONTROLM: /controlm/agentctm/ctm
+  become: yes
+  become_user: agentctm

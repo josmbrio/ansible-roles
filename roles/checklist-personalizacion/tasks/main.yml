@@ -1,0 +1,35 @@
+---
+- name: '[ CREAR ARCHIVO MOTD ]'
+  copy:
+    src: file-motd.txt
+    dest: /etc/motd
+
+- name: '[ CREAR ARCHIVO ISSUE ]'
+  copy:
+    src: file-issue.txt
+    dest: /etc/issue
+
+- name: '[ AGREGAR HOSTNAME A ISSUE ]'
+  lineinfile:
+    path: /etc/issue
+    regexp: 'Bienvenido'
+    line: '║    Bienvenido {{ ansible_hostname }}                                ║ '
+
+- name: '[ COPIAR ARCHIVO ISSUE A ISSUE.NET ]'
+  command: cp /etc/issue /etc/issue.net
+
+- name: '[ CONFIGURAR PROMPT EN BASHRC ]'
+  lineinfile:
+    path: /etc/bashrc
+    regexp: '^export PS1='
+    line: export PS1='[\t] \u-\h:\w\$'
+
+- name: '[ CONFIGURAR INFORMACION DEL SISTEMA ]'
+  copy:
+    src: file-sysinfo.txt
+    dest: /etc/profile.d/sysinfo.sh
+
+- name: '[ REINICIAR SSHD]'
+  service:
+    name: sshd
+    state: restarted

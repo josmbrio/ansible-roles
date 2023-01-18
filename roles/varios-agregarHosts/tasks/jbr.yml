@@ -1,0 +1,7 @@
+---
+- name: '[ CONFIGURAR /ETC/HOSTS ]'
+  lineinfile:
+    path: /etc/hosts
+    regexp: 'export PS1='
+    line: export PS1='[\t] \u-\h:\w\$'
+

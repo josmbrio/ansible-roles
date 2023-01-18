@@ -1,0 +1,64 @@
+- name: '[ INSTALACION DE PAQUETES DESDE HTTP BASTION ]'
+  yum:
+    name: "{{ paquetesiso }}"
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+
+- name: '[ TRANSFERIR PAQUETES OPCIONALES GO Y ZABBIX ]'
+  synchronize:
+    src: "{{ item }}"
+    dest: /root/opcionales/
+  with_items: "{{ paquetesopcionales2 }}"
+
+- name: '[ DESCOMPRIMIR PAQUETES ZABBIX]'
+  unarchive:
+    src: '/root/opcionales/zabbix-5.2.1.tar.gz'
+    dest: /root/opcionales/
+    remote_src: yes
+
+- name: '[ DESCOMPRIMIR PAQUETES GO]'
+  unarchive:
+    src: '/root/opcionales/go1.15.5.linux-amd64.tar.gz'
+    dest: /usr/local/
+    remote_src: yes
+
+- name: '[ MODIFICAR PROFILE GENERAL]'
+  lineinfile:
+    path: /etc/profile
+    regexp: 'export PATH=$PATH:/usr/local/go/bin'
+    line: 'export PATH=$PATH:/usr/local/go/bin'
+
+- name: '[ INSTALACION DE ZABBIX P1 ]'
+  shell:
+    chdir: /root/opcionales/zabbix-5.2.1/
+    cmd: ./configure --enable-agent --enable-agent2
+  environment:
+    PATH: '/usr/local/go/bin:{{ ansible_env.PATH }}'
+
+- name: '[ INSTALACION DE ZABBIX P2 ]'
+  shell:
+    chdir: /root/opcionales/zabbix-5.2.1/
+    cmd: make install
+  environment:
+    PATH: '/usr/local/go/bin:{{ ansible_env.PATH }}'
+
+- name: '[ CONFIGURAR SERVIDORES Y HOSTNAME EN ZABBIX]'
+  lineinfile:
+    path: /usr/local/etc/zabbix_agent2.conf
+    regexp: 'Server='
+    line: 'Server=130.2.17.149'
+
+- name: '[ CONFIGURAR SERVIDORES Y HOSTNAME EN ZABBIX]'
+  lineinfile:
+    path: /usr/local/etc/zabbix_agent2.conf
+    regexp: 'ServerActive='
+    line: 'ServerActive=130.2.17.149'
+
+- name: '[ HABILITAR SERVICIO ZABBIX ]'
+  systemd:
+    name: zabbix-agent2
+    state: started
+    enabled: yes
+

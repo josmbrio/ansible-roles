@@ -1,0 +1,7 @@
+---
+- name: "DESHABILITAR AVAHI"
+  service: 
+    name: “avahi-daemon”
+    state: stopped
+    enabled: no
+  ignore_errors: yes

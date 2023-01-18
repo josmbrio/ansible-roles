@@ -1,0 +1,7 @@
+---
+- name: "CREA USUARIO AGENTCTM"
+  user:
+    name: agentctm
+    home: /controlm/agentctm
+    password: "{{ '4g3ntctm##' | password_hash('sha512') }}"
+    create_home: yes

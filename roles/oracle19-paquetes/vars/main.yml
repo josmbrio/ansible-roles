@@ -1,0 +1,51 @@
+---
+# vars file for oracle19-paquetes
+paquetesOracle19:
+  - 'oracleasmlib-2.0.17-1.el8.x86_64.rpm'
+  - 'oracleasm-support-2.1.12-1.el8.x86_64.rpm'
+#  - 'kmod-redhat-oracleasm-2.0.8-12.el8.x86_64.rpm'
+  - 'libnsl2-devel-1.2.0-2.20180605git4a062cf.el8.x86_64.rpm'
+
+paquetesOracle19Ruta:
+  - '/root/paquetes-oracle/oracleasmlib-2.0.17-1.el8.x86_64.rpm'
+  - '/root/paquetes-oracle/oracleasm-support-2.1.12-1.el8.x86_64.rpm'
+#  - '/root/paquetes-oracle/kmod-redhat-oracleasm-2.0.8-12.el8.x86_64.rpm'
+  - '/root/paquetes-oracle/libnsl2-devel-1.2.0-2.20180605git4a062cf.el8.x86_64.rpm'
+
+paquetesGraficoOracle19:
+  - dejavu-serif-fonts
+  - dejavu-fonts-common
+
+paquetesBinarioOracle19:
+  - psmisc
+
+paquetesBaseOracle19:
+  - bc
+  - binutils
+  - elfutils-libelf
+  - elfutils-libelf-devel
+  - fontconfig-devel
+  - glibc
+  - glibc-devel
+  - ksh
+  - libaio
+  - libaio-devel
+  - libXrender
+  - libX11
+  - libXau
+  - libXi
+  - libXtst
+  - libgcc
+  - libnsl
+  - libstdc++
+  - libstdc++-devel
+  - libxcb
+  - libibverbs
+  - make
+  - net-tools
+  - nfs-utils
+  - targetcli
+  - smartmontools
+  - sysstat
+  - gcc-c++
+  - xauth

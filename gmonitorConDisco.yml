@@ -1,0 +1,15 @@
+---
+- hosts: '{{servidor}}'
+  gather_facts: no
+  vars_prompt:
+    - name: servidor
+      prompt: "En que servidor?"
+      private: no
+    - name: disco
+      prompt: "Sobre qué disco o partición estará GestionEventos?"
+      private: no
+    - name: comentario
+      prompt: "Comentario: "
+      private: no
+  roles:
+    - role: varios-gmonitorConDisco

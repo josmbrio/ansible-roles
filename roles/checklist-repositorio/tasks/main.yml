@@ -1,0 +1,70 @@
+---
+- name: '[ MODIFICAR REPOSITORIO LOCAL PARA RHEL 7 ]'
+  yum_repository:
+    name: bastionREPO
+    file: bastionREPO
+    description: Repositorio local para RHEL 7
+    baseurl: 'file:///var/RHEL/{{version7}}'
+    gpgcheck: no
+    enabled: yes
+  when: ansible_facts['distribution_major_version'] == '7' and repositorio == 'local'
+
+- name: '[ MODIFICAR REPOSITORIO LOCAL PARA RHEL 8 BASEOS ]'
+  yum_repository:
+    name: bastionREPOBO
+    file: bastionREPOBO
+    description: Repositorio local para RHEL 8
+    baseurl: 'file:///var/RHEL/{{version8}}/BaseOS/'
+    gpgcheck: no
+    enabled: yes
+  when: ansible_facts['distribution_major_version'] == '8' and repositorio == 'local'
+
+- name: '[ MODIFICAR REPOSITORIO LOCAL PARA RHEL 8 APPSTREAM ]'
+  yum_repository:
+    name: bastionREPOAS
+    file: bastionREPOAS
+    description: Repositorio local para RHEL 8
+    baseurl: 'file:///var/RHEL/{{version8}}/AppStream/'
+    gpgcheck: no
+    enabled: yes
+  when: ansible_facts['distribution_major_version'] == '8' and repositorio == 'local'
+
+- name: '[ MODIFICAR REPOSITORIO REMOTO PARA RHEL 6 ]'
+  yum_repository:
+    name: bastionREPO
+    file: bastionREPO
+    description: Repositorio apache para RHEL 6
+    baseurl: 'http://10.202.21.9/RHEL/{{version6}}/'
+    gpgcheck: no
+    enabled: yes
+  when: ansible_facts['distribution_major_version'] == '6' and repositorio == 'remoto'
+
+- name: '[ MODIFICAR REPOSITORIO REMOTO PARA RHEL 7 ]'
+  yum_repository:
+    name: bastionREPO
+    file: bastionREPO
+    description: Repositorio apache para RHEL 7
+    baseurl: 'http://10.202.21.9/RHEL/{{version7}}/'
+    gpgcheck: no
+    enabled: yes
+  when: ansible_facts['distribution_major_version'] == '7' and repositorio == 'remoto'
+
+- name: '[ MODIFICAR REPOSITORIO REMOTO PARA RHEL 8 BASEOS ]'
+  yum_repository:
+    name: bastionREPOBO
+    file: bastionREPOBO
+    description: Repositorio apache para RHEL 8 BaseOS
+    baseurl: 'http://10.202.21.9/RHEL/{{version8}}/BaseOS/'
+    gpgcheck: no
+    enabled: yes
+  when: ansible_facts['distribution_major_version'] == '8' and repositorio == 'remoto'
+
+- name: '[ MODIFICAR REPOSITORIO REMOTO PARA RHEL 8 APPSTREAM ]'
+  yum_repository:
+    name: bastionREPOAS
+    file: bastionREPOAS
+    description: Repositorio apache para RHEL 8 AppStream
+    baseurl: 'http://10.202.21.9/RHEL/{{version8}}/AppStream/'
+    gpgcheck: no
+    enabled: yes
+  when: ansible_facts['distribution_major_version'] == '8' and repositorio == 'remoto'

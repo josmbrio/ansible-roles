@@ -1,0 +1,28 @@
+---
+- name: '[ CREACION DE REPOSITORIO REMOTO PARA RHEL]'
+  yum_repository:
+    name: rhel79_latest_updates
+    file: rhel79_latest
+    description: "RHEL 7.9 Latest updates"
+    baseurl: 'http://10.202.21.9/RHEL/rhel-7-server-rpms/'
+    gpgcheck: no
+    enabled: yes
+
+- name: '[ CREACION DE REPOSITORIO REMOTO DEPENDENCIAS]'
+  yum_repository:
+    name: jbr_hadoop_dep
+    file: jbr_hadoop_dep
+    description: "Dependencias Actualizacion Hadoop"
+    baseurl: 'http://10.202.21.9/RHEL/jbr_hadoop_dep/'
+    gpgcheck: no
+    enabled: yes
+
+- name: '[ ACTUALIZAR SO 7.9 LATEST ]'
+  yum:
+    name: "*"
+    state: latest
+    update_only: yes
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: rhel79_latest_updates,jbr_hadoop_dep
+

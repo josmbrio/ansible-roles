@@ -1,0 +1,13 @@
+---
+# tasks file for docker-parametros-kernel
+- name: "[ CONFIGURAR PARAMETROS DE KERNEL PARA DOCKER ]"
+  sysctl:
+    name: '{{ item.key }}'
+    value: '{{ item.value }}'
+    ignoreerrors: yes
+    state: present
+    reload: yes
+  with_dict: '{{parametrosKernelDocker}}'
+
+- name: "HABILITAR NAMESPACE EN GRUB"
+  shell: grubby --args "namespace.unpriv_enable=1 user_namespace.enable=1" --update-kernel $(grubby --default-kernel)

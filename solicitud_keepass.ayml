@@ -1,0 +1,23 @@
+---
+- hosts: '{{servidor}}'
+  gather_facts: yes
+  vars_prompt:
+    - name: servidor
+      prompt: "En que grupo de servidores?"
+      private: no
+      default: "localhost"
+      private: no
+    - name: password
+      prompt: "\n==> Ingresar password de root: "
+      private: no
+    - name: notas
+      prompt: "\n==> Ingresar Notas: "
+      private: no
+    - name: correo_adicional
+      prompt: "\n==> La solicitud se enviará a scallea@claro.com.ec. ¿Algun email adicional?: "
+      default: ""
+      private: no
+
+  roles:
+    - {role: solicitud_keepass}
+

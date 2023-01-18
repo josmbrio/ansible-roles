@@ -1,0 +1,70 @@
+---
+- name: '[ CREAR VOLUME GROUP VG_GMONITOR ]'
+  lvg:
+    vg: vg_gmonitor
+    pvs: '{{disco}}'
+    state: present
+- name: '[ CREAR LOGICAL VOLUME LV_GMONITOR ]'
+  lvol:
+    vg: vg_gmonitor
+    lv: lv_gmonitor
+    size: 100%FREE
+- name: '[ CREAR FILESYSYEM PARA GESTION EVENTOS ]'
+  filesystem:
+    fstype: xfs
+    dev: /dev/vg_gmonitor/lv_gmonitor
+- name:  '[ MONTAR /GestionEventos EN FSTAB ]'
+  mount:
+    path: /GestionEventos
+    src: /dev/vg_gmonitor/lv_gmonitor
+    fstype: xfs
+    opts: defaults
+    state: mounted
+- name: "CREAR USUARIO GMONITOR"
+  user:
+    name: gmonitor
+    password: "{{ 'gmonitor' | password_hash('sha512') }}"
+    home: /GestionEventos/gmonitor
+    shell: /bin/bash
+    comment: "{{ comentario }} - Panel de calidad Resp. GAS"
+- name: "AGREGAR GRUPO DBA"
+  user:
+    name: gmonitor
+    groups: dba
+  ignore_errors: yes
+
+- name: "AGREGAR SUDO PARA DU"
+  lineinfile:
+    path: /etc/sudoers
+    regexp: 'gmonitor ALL=(ALL)  NOPASSWD:/usr/bin/du *'
+    line: 'gmonitor ALL=(ALL)  NOPASSWD:/usr/bin/du *'
+
+- name: "AGREGAR SUDO PARA NETSTAT"
+  lineinfile:
+    path: /etc/sudoers
+    regexp: 'gmonitor ALL=(ALL)  NOPASSWD:/usr/bin/netstat *'
+    line: 'gmonitor ALL=(ALL)  NOPASSWD:/usr/bin/netstat *'
+
+- name: "AGREGAR SUDO PARA LSOF"
+  lineinfile:
+    path: /etc/sudoers
+    regexp: 'gmonitor ALL=(ALL)  NOPASSWD:/usr/sbin/lsof *'
+    line: 'gmonitor ALL=(ALL)  NOPASSWD:/usr/sbin/lsof *'
+
+- name: "AGREGAR SUDO PARA CRONTAB"
+  lineinfile:
+    path: /etc/sudoers
+    regexp: 'gmonitor ALL=(ALL)  NOPASSWD:/usr/bin/crontab -l *'
+    line: 'gmonitor ALL=(ALL)  NOPASSWD:/usr/bin/crontab -l *'
+
+- name: "NO REQUERIR  TTY"
+  lineinfile:
+    path: /etc/sudoers
+    regexp: "Defaults:gmonitor !requiretty"
+    line: "Defaults:gmonitor !requiretty"
+
+- name: "QUITAR EXPIRACION"
+  command: chage -I -1 -m 0 -M 99999 -E -1 -W 0 gmonitor
+
+- name: "OBLIGAR CAMBIO DE CLAVE"
+  command: chage -d 0 gmonitor

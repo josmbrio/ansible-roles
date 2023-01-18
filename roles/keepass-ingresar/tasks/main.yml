@@ -1,0 +1,60 @@
+---
+- name: Respaldar keepass db actual
+  shell:
+    cmd: ssh root@130.2.18.237 cp /var/www/html/keepass/Server.kdbx /var/www/html/keepass/bkp/ansible/Server.$(date +%d-%m-%Y).kdbx 
+  delegate_to: localhost
+  run_once: true
+
+- name: Descargar keepass db
+  get_url:
+    url: http://130.2.18.237/keepass/Server.kdbx
+    dest: /tmp/Server.kdbx
+    force: true
+    mode: '0600'
+  delegate_to: localhost
+  run_once: true
+
+- name: Ingresar servidor a db de keepass
+  vars:
+    ansible_python_interpreter: /usr/bin/python3.9
+  keepass:
+    database: /tmp/Server.kdbx
+    password: 's0m0s1nfraTI'
+    hostname: "{{ inventory_hostname }}"
+    username: root
+    purpose: ""
+    password_length: 12
+    url: "ssh:{{ansible_default_ipv4['address']}}"
+    notes: "Generado por Ansible: {{ notes }}"
+    icon: '62'
+  register: creds2
+  delegate_to: localhost
+  throttle: 1
+
+- name: Subir keepass db
+  shell:
+    cmd: scp /tmp/Server.kdbx root@130.2.18.237:/var/www/html/keepass/
+  delegate_to: localhost
+  run_once: true
+
+- name: Eliminar keepass db temporal
+  file:
+    path: /tmp/Server.kdbx
+    state: absent
+  delegate_to: localhost
+  run_once: true
+
+- name: Notificar por correo que se agregaron servidores al keepass
+  mail:
+    host: 192.168.35.61
+    port: 25
+    subject: "Se agregaron servidores al keepass: {{ notes }}"
+    body: "Se agregaron servidores al keepass. {{ notes }}"
+    from: ansible_infr@claro.com.ec
+    to:
+      - sis_infr_servidores@claro.com.ec
+  delegate_to: localhost
+  run_once: true
+  
+
+

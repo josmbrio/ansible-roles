@@ -1,0 +1,56 @@
+---
+paquetesopcionales7:
+  - compat-libstdc++-33-3.2.3-72.el7.i686.rpm
+  - compat-libstdc++-33-3.2.3-72.el7.x86_64.rpm
+  - glibc-2.17-292.el7.i686.rpm
+  - libgcc-4.8.5-39.el7.i686.rpm
+  - nss-softokn-freebl-3.44.0-8.el7_7.i686.rpm
+  - nss-softokn-freebl-3.44.0-8.el7_7.x86_64.rpm
+paquetesbase:
+  - bc
+  - binutils
+  - elfutils-libelf
+  - elfutils-libelf-devel
+  - fontconfig-devel
+  - glibc
+  - glibc-devel
+  - ksh
+  - libaio
+  - libaio-devel
+  - libX11
+  - libXau
+  - libXi
+  - libXtst
+  - libgcc
+  - libstdc++
+  - libstdc++-devel
+  - libxcb
+  - make
+  - net-tools
+  - nfs-utils
+  - targetcli
+  - smartmontools
+  - sysstat
+  - gcc-c++
+  - xauth
+  - dejavu-serif-fonts
+  - dejavu-fonts-common
+paquetesbase7:
+  - compat-libcap1
+  - compat-libstdc++
+  - libXrender
+  - libXrender-devel
+  - python
+  - python-configshell
+  - python-rtslib
+  - python-six
+  - xclock
+  - kmod-oracleasm
+paquetesbase8:
+  - libnsl
+  - librdmacm
+  - libibverbs
+  - libnsl2
+
+paquetesadicionales8:
+  - libnsl2-devel

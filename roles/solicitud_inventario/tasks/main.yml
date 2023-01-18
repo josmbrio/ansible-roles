@@ -1,0 +1,36 @@
+- name: Crear archivo de Inventario
+  lineinfile:
+    path: /tmp/Ingreso_Inventario.csv
+    line: "datacenter;VDC;fila;rack;unidad;bahia;estado;clasificacion;tipo;hypervisor;contenedor;hostname;sistemaOperativo;descripcion;memoriaRam;cpu;marca;modelo;numeroSerie;numeroParte;Ips;ipadm"
+    create: yes
+  delegate_to: localhost
+  run_once: true
+
+- name: Agrega servidores al archivo de Inventario
+  lineinfile:
+    path: /tmp/Ingreso_Inventario.csv
+    line: "{{ datacenter }};{{ VDC }};{{ fila }};{{ rack }};{{ unidad }};{{ bahia }};{{ estado }};{{ clasificacion }};{{ tipo }};{{ hypervisor }};{{ contenedor }};{{ ansible_hostname }};{{ansible_distribution}} {{ansible_distribution_version}};{{ descripcion }};{{ ansible_memtotal_mb }} MB;{{ ansible_processor_vcpus }};{{ ansible_system_vendor }};{{ ansible_product_name }};{{ ansible_product_serial }};n/a;{{ ansible_default_ipv4['address'] }};{{ ipadm }}"
+  delegate_to: localhost
+
+- name: Envia archivo de Inventario al correo de ACO
+  mail:
+    host: 192.168.35.61
+    port: 25
+    subject: Ingresar servidores a Inventario
+    body: Estimado Allan, Favor tu ayuda ingresando estos servidores al Inventario.
+    from: ansible_infr@claro.com.ec
+    to:
+      - acordovd@claro.com.ec
+    cc: "{{correo_adicional}}"
+    attach:
+      - /tmp/Ingreso_Inventario.csv
+  delegate_to: localhost
+  run_once: true
+
+- name: Elimina archivo de Inventario
+  file:
+    path: /tmp/Ingreso_Inventario.csv
+    state: absent
+  delegate_to: localhost
+  run_once: true
+ 

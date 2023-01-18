@@ -1,0 +1,6 @@
+---
+- name: "CREAR ARCHIVO DE INVENTARIO"
+  ansible.builtin.template:
+    src: roles/jbrtest_inventario/templates/Template_Ingreso_Inventario.csv
+    dest: "/tmp/Ingreso_Inventario_{{hostname}}.csv"
+    

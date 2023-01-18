@@ -1,0 +1,8 @@
+---
+- name: '[ CREAR USUARIO ]'
+  user:
+    name: '{{nombreUsuario}}'
+    password: "{{ claveUsuario|password_hash('sha512') }}"
+    home: '{{rutaUsuario}}'
+    shell: /bin/bash
+    comment: '{{comentarioUsuario}}'

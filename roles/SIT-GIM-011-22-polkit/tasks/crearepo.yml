@@ -1,0 +1,10 @@
+  - name: CREACION DE REPOSITORIO - "{{repo_desc}}"
+    yum_repository:
+      name: "{{ repo_name }}"
+      file: "{{ repo_name }}"
+      description: "{{ repo_desc }}"
+      baseurl: "{{ repo_baseurl }}"
+      gpgcheck: no
+      enabled: yes
+
+

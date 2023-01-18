@@ -1,0 +1,58 @@
+---
+- name: Copiar query a servidor postgres
+  shell:    
+    cmd: scp roles/inventario-ingresar/files/query.sql root@10.202.21.8:/tmp/query.sql 
+  delegate_to: localhost
+  run_once: true
+
+- name: Ingresar servidores a la db del inventario
+  community.postgresql.postgresql_script:
+    login_host: localhost
+    login_user: postgres
+    login_password: postgres
+    db: inventario
+    path: /tmp/query.sql
+    positional_args:
+      - '{{inventory_hostname}}'
+      - '{{datacenter_id}}'
+      - '{{vdc_id}}'
+      - '{{fila}}'
+      - '{{rack}}'
+      - '{{unidad}}'
+      - '{{bahia}}'
+      - '{{estado}}'
+      - '{{tipo}}'
+      - '{{hypervisor}}'
+      - '{{clasificacion_id}}'
+      - '{{contenedor}}'
+      - '{{inventory_hostname}}'
+      - 'RHEL {{ansible_distribution_version}}'
+      - ';;\n{{descripcion}}'
+      - '{{((ansible_memtotal_mb / 1000) | round) | int }} GB'
+      - '{{ansible_processor_vcpus}}'
+      - '{{marca_id}}'
+      - '{{ansible_product_name}}'
+      - '{{ansible_product_serial}}'
+      - '{{numero_parte}}'
+      - '{{ansible_default_ipv4.address}}'
+      - '{{ipadm}}'      
+  delegate_to: 10.202.21.8
+
+- name: Eliminar query de servidor postgres
+  file:
+    path: /tmp/query.sql
+    state: absent
+  delegate_to: 10.202.21.8
+  run_once: true
+
+- name: Notificar por correo que se agregaron servidores al inventario
+  mail:
+    host: 192.168.35.61
+    port: 25
+    subject: "Se agregaron servidores al Inventario: {{ descripcion }}"
+    body: "Se agregaron servidores al keepass. {{ descripcion }}"
+    from: ansible_infr@claro.com.ec
+    to:
+      - sis_infr_servidores@claro.com.ec
+  delegate_to: localhost
+  run_once: true

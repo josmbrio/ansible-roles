@@ -1,0 +1,23 @@
+---
+# vars file for docker-instalacion
+
+binariosDocker:
+  - docker-compose
+
+paquetesDocker:
+  - pigz
+  - containerd.io
+  - docker-ce
+  - docker-ce-cli
+
+paquetesDockerRhel8:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-ce-rootless-extras
+  - docker-scan-plugin
+
+desinstalar:
+  - podman 
+  - buildah
+  - runc

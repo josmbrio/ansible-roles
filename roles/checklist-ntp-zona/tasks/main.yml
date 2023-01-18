@@ -1,0 +1,38 @@
+---
+- name: '[ CONFIGURAR UBICACION ]'
+  timezone:
+    name: America/Guayaquil
+
+- name: '[ DESINSTALAR NTP ]'
+  yum:
+    name: ntpd
+    state: absent
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+
+- name: '[ INSTALAR CHRONYD ]'
+  yum:
+    name: chrony
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+
+- name: '[ HABILITAR CHRONYD ]'
+  service:
+    name: chronyd
+    enabled: yes
+    state: started
+
+- name: '[ CONFIGURAR CHRONYD ]'
+  copy:
+    content: |
+             driftfile /var/lib/chrony/drift
+             makestep 1.0 3
+             rtcsync
+             logdir /var/log/chrony
+             server 130.2.2.159 iburst trust
+             server 130.2.18.61 iburst
+    dest: /etc/chrony.conf
+  notify: reiniciar_chronyd

@@ -1,0 +1,5 @@
+---
+# tasks file for docker-reboot
+
+- name: "[REINICIO DEL SERVIDOR  ]"
+  command: /sbin/shutdown -r now

@@ -1,0 +1,2 @@
+Tipo;Hostname;Protocolo;IP Principal;User;Password;Notas
+{{ sistemaOperativo }};{{ hostname }};{{ protocolo }};{{ Ips }};{{ user }};{{ password }};{{ notas }}

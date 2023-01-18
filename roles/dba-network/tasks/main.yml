@@ -1,0 +1,6 @@
+---
+- name: "CONFIGURAR PROMPT EN BASHRC"
+  lineinfile:
+    path: /etc/sysconfig/network
+    regexp: 'NOZEROCONF'
+    line: NOZEROCONF=yes

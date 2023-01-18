@@ -1,0 +1,27 @@
+---
+# tasks file for oracle19-grupos-usuarios
+- name: "CREAR GRUPOS"
+  group:
+    name: "{{item.key}}"
+    gid: "{{item.value}}"
+    state: present
+  with_dict: "{{dbagroups}}"
+
+- name: "CREAR USUARIOS"
+  user:
+    name: "{{item.key}}"
+    uid: "{{item.value.uid}}"
+    group: "{{item.value.gid}}"
+    groups: "{{item.value.groups}}"
+    password: "{{ '{{item.key}}' | password_hash('sha512') }}"
+    state: present
+  with_dict: "{{dbausers}}"
+
+- name: "QUITAR EXPIRACION DE ORACLE"
+  command: chage -I -1 -m 0 -M 99999 -E -1 -W 0 oracle
+
+- name: "QUITAR EXPIRACION DE ORACLE"
+  command: chage -I -1 -m 0 -M 99999 -E -1 -W 0 grid
+
+- name: "QUITAR EXPIRACION DE ORACLE"
+  command: chage -I -1 -m 0 -M 99999 -E -1 -W 0 respaldo

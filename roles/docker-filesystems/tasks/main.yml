@@ -1,0 +1,48 @@
+---
+- name: '[ PARTICIONAR DISCO 1]'
+  parted:
+    device: /dev/xxx
+    number: 1
+    flags: [ lvm ]
+    state: present
+- name: '[ CREAR VOLUME GROUP VG_DOCKER ]'
+  lvg:
+    vg: vg_docker
+    pvs: /dev/xxx
+    state: present
+- name: '[ CREAR LOGICAL VOLUMES DATAHOME ]'
+  lvol:
+    vg: vg_docker
+    lv: datahome
+    size: 80G
+    shrink: no
+- name: '[ CREAR LOGICAL VOLUMES APPS ]'
+  lvol:
+    vg: vg_docker
+    lv: apps
+    size: +100%FREE
+    shrink: no
+- name: '[ CREAR FILESYSYEM PARA DATAHOME ]'
+  filesystem:
+    fstype: xfs
+    dev: /dev/vg_docker/datahome
+    opts: -L dockdahome
+- name: '[ CREAR FILESYSYEM PARA APPS ]'
+  filesystem:
+    fstype: xfs
+    dev: /dev/vg_docker/apps
+    opts: -L dockapps
+- name:  '[ MONTAR DATAHOME EN FSTAB ]'
+  mount:
+    path: /docker/datahome
+    src: LABEL=dockdahome
+    fstype: xfs
+    opts: defaults
+    state: mounted
+- name:  '[ MONTAR APPS EN FSTAB ]'
+  mount:
+    path: /docker/apps
+    src: LABEL=dockapps
+    fstype: xfs
+    opts: defaults
+    state: mounted

@@ -1,0 +1,10 @@
+---
+- name: CONFIGURACIONES DE KERNEL
+  sysctl:
+    name: '{{ item.key }}'
+    value: '{{ item.value }}'
+    state: present
+    ignoreerrors: yes
+    reload: yes
+  with_dict: '{{secureValues}}'
+  when: ansible_facts['distribution_major_version'] == '8'

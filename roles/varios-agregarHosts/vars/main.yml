@@ -1,0 +1,17 @@
+---
+# vars file for varios-agregarHosts
+
+registrosHostnames:
+  - 10.31.72.1: prvgye1cs1ms1
+  - 10.31.72.3: prvgye1cs1ms2
+  - 10.31.72.10: prvgye1cs1ma3
+  - 10.31.72.11: prvgye1cs1ma4
+  - 10.31.72.5: CSCLUSTER
+  - 10.31.72.6: CSDTC
+  - 10.31.72.7: CSCLUSTERSQL
+  - 10.31.72.7: CSCLUSTERSQL.porta.corp
+  - 10.31.72.12: MACLUSTER1
+  - 10.31.72.8: prvgye1cs1ma1.porta.corp
+  - 10.31.72.9: prvgye1cs1ma2.porta.corp
+  - 10.31.72.10: prvgye1cs1ma3.conecel.com
+  - 10.31.72.11: prvgye1cs1ma4.conecel.com

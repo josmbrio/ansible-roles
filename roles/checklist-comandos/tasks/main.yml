@@ -1,0 +1,136 @@
+- name: '[ INSTALACION DE PAQUETES DESDE HTTP BASTION ]'
+  yum:
+    name: "{{ paquetesiso }}"
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+
+- name: '[ INSTALACION DE COCKPIT-PCP ]'
+  yum:
+    name: 'cockpit-pcp'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+  when: ansible_facts['distribution_major_version'] == '8'
+
+- name: '[ HABILITAR COCKPIT ]'
+  systemd:
+    name: "cockpit.socket"
+    state: started
+    enabled: true
+    daemon_reload: true
+
+- name: '[ TRANSFERIR PAQUETES OPCIONALES PARA INSTALACION RHEL 7 ]'
+  synchronize:
+    src: "{{ item }}"
+    dest: /root/opcionales/
+  with_items: "{{ paquetesopcionales7 }}"
+  when: ansible_facts['distribution_major_version'] == '7'
+
+- name: '[ TRANSFERIR PAQUETES OPCIONALES PARA INSTALACION RHEL 8 ]'
+  synchronize:
+    src: "{{ item }}"
+    dest: /root/opcionales/
+  with_items: "{{ paquetesopcionales8 }}"
+  when: ansible_facts['distribution_major_version'] == '8'
+
+- name: '[ TRANSFERIR PAQUETE ZABBIX 2 PARA INSTALACION RHEL 7 ]'
+  synchronize:
+    src: "{{ item }}"
+    dest: /root/opcionales/
+  with_items: "{{ paquetezabbix7 }}"
+  when: ansible_facts['distribution_major_version'] == '7'
+
+- name: '[ TRANSFERIR PAQUETE ZABBIX 2 PARA INSTALACION RHEL 8 ]'
+  synchronize:
+    src: "{{ item }}"
+    dest: /root/opcionales/
+  with_items: "{{ paquetezabbix8 }}"
+  when: ansible_facts['distribution_major_version'] == '8'
+
+- name: '[ COPIAR ARCHIVOS PARA NETDATA ]'
+  synchronize:
+    src: netdata.tar
+    dest: /root/
+
+- name: '[ DESCOMPRIMIR PAQUETES DE NETDATA ]'
+  unarchive:
+    src: /root/netdata.tar
+    dest: /root/
+    remote_src: yes
+
+- name: '[ INSTALACION DE PAQUETES OPCIONALES HTOP PARA RHEL 7 ]'
+  yum:
+    name: '{{ paquetesopcionales7ruta }}'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+  when: ansible_facts['distribution_major_version'] == '7'
+
+- name: '[ INSTALACION DE PAQUETES OPCIONALES HTOP PARA RHEL 8 ]'
+  yum:
+    name: '{{ paquetesopcionales8ruta }}'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+  when: ansible_facts['distribution_major_version'] == '8'
+
+- name: '[ INSTALACION DE PREREQUISITOS DE NETDATA ]'
+  yum:
+    name: "{{ paquetesnetdata }}"
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+
+- name: '[ INSTALACION DE NETDATA ]'
+  shell:
+    chdir: /root/netdata/
+    cmd: ./netdata-installer.sh --dont-wait
+
+- name: '[ INSTALACION DE ZABBIX 2 PARA RHEL 7 ]'
+  yum:
+    name: '{{ paquetezabbix7ruta }}'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+  when: ansible_facts['distribution_major_version'] == '7'
+
+- name: '[ INSTALACION DE ZABBIX 2 PARA RHEL 8 ]'
+  yum:
+    name: '{{ paquetezabbix8ruta }}'
+    state: present
+    disable_plugin: '*'
+    disablerepo: '*'
+    enablerepo: bastionREPO,bastionREPOBO,bastionREPOAS
+  when: ansible_facts['distribution_major_version'] == '8'
+
+- name: '[ MODIFICAR ARCHIVO DE CONFIGURACION DE ZABBIX - SERVER ]'
+  lineinfile:
+    path: /etc/zabbix/zabbix_agent2.conf
+    regexp: '^Server='
+    line: 'Server=130.2.17.149'
+
+- name: '[ MODIFICAR ARCHIVO DE CONFIGURACION DE ZABBIX - SERVERACTIVE ]'
+  lineinfile:
+    path: /etc/zabbix/zabbix_agent2.conf
+    regexp: '^ServerActive='
+    line: 'ServerActive=130.2.17.149'
+
+- name: '[ MODIFICAR ARCHIVO DE CONFIGURACION DE ZABBIX - HOSTNAME ]'
+  lineinfile:
+    path: /etc/zabbix/zabbix_agent2.conf
+    regexp: '^Hostname='
+    line: 'Hostname={{ansible_hostname}}'
+
+- name: '[ HABILITAR SERVICIO ZABBIX ]'
+  systemd:
+    name: zabbix-agent2
+    state: started
+    enabled: yes
+

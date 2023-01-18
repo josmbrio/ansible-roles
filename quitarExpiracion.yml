@@ -1,0 +1,18 @@
+---
+- hosts: '{{servidor}}'
+  gather_facts: no
+  vars_prompt:
+    - name: servidor
+      prompt: "En que servidor?"
+      private: no
+      default: "localhost"
+
+    - name: nombreUsuario
+      prompt: "Ingrese usuario: "
+      private: no
+
+  tasks:
+
+  - name: '[QUITAR EXPIRACION DE CONTRASEÑA]'
+    shell:
+      cmd: chage -I -1 -m 0 -M 99999 -E -1 -W 0 '{{nombreUsuario}}'

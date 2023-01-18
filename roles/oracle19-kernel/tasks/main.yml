@@ -1,0 +1,10 @@
+---
+# tasks file for oracle19-kernel
+- name: CONFIGURACIONES DE KERNEL
+  sysctl:
+    name: '{{ item.key }}'
+    value: '{{ item.value }}'
+    state: present
+    ignoreerrors: yes
+    reload: yes
+  with_dict: '{{kernelValues}}'

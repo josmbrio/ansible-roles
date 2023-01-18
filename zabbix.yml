@@ -1,0 +1,19 @@
+---
+- hosts: '{{servidor}}'
+  gather_facts: yes
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_httpapi_port: 80
+    ansible_httpapi_use_ssl: false
+    ansible_httpapi_validate_certs: false
+    ansible_user: Admin
+    ansible_httpapi_pass: zabbix
+  vars_prompt:
+    - name: servidor
+      prompt: "En que servidor?"
+      private: no
+      default: "localhost"
+  roles:
+#    - {role: checklist-zabbix2}
+    - {role: zabbix2-agregar-host}

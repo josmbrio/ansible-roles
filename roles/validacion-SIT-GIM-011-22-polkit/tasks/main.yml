@@ -1,0 +1,13 @@
+---
+# tasks file for validacion-SIT-GIM-011-22-polkit
+  - name: Validar vulnerabilidades 
+    script: roles/validacion-SIT-GIM-011-22-polkit/files/cve-2021-4034--2022-01-25-0936.sh
+    register: result
+
+  - name: Reportar Host vulnerable
+    debug:
+      msg: "Servidor vulnerable"
+    when: "'This polkit version is vulnerable' in result.stdout"
+    vars:
+      - vulnerable: true
+

@@ -1,0 +1,22 @@
+---
+# vars file for ./roles/weblogic-paqueteria
+paquetesiso:
+  - binutils
+  - gcc
+  - gcc-c++
+  - glibc
+  - glibc-devel
+  - libaio
+  - libaio-devel
+  - libgcc
+  - libstdc++
+  - libstdc++-devel
+  - libnsl
+  - sysstat
+  - motif
+  - motif-devel
+  - redhat-lsb
+  - redhat-lsb-core
+  - openssl
+  - make
+

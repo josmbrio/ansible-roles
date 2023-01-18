@@ -1,0 +1,10 @@
+---
+- hosts: broker 
+  gather_facts: yes
+  roles:
+#    - {role: docker-filesystems, tags: filesystem}
+    - {role: docker-instalacion, tags: instalacion}
+    - {role: docker-configuracion, tags: configuracion}
+    - {role: docker-parametros-kernel, tags: parametros-kernel}
+    - {role: docker-permisos, tags: permisos}
+    - {role: docker-reboot, tags: reboot}

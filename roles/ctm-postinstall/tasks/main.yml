@@ -1,0 +1,44 @@
+---
+- name: '[ REPARAR BASH PROFILE ]'
+  lineinfile:
+    dest: '/controlm/agentctm/.bash_profile'
+    line: 'if [ -f ~/.bashrc ]; then . ~/.bashrc; fi'
+
+- name: '[ HACER SUDOS PARA USUARIO AGENTCTM P1]'
+  lineinfile:
+    path: /etc/sudoers
+    regexp: 'agentctm   ALL=(ALL)   NOPASSWD:/controlm/agentctm/ctm/scripts/start-ag'
+    line: 'agentctm   ALL=(ALL)   NOPASSWD:/controlm/agentctm/ctm/scripts/start-ag'
+
+- name: '[ HACER SUDOS PARA USUARIO AGENTCTM P2]'
+  lineinfile:
+    path: /etc/sudoers
+    regexp: 'agentctm   ALL=(ALL)   NOPASSWD:/controlm/agentctm/ctm/scripts/shut-ag'
+    line: 'agentctm   ALL=(ALL)   NOPASSWD:/controlm/agentctm/ctm/scripts/shut-ag'
+        
+- name: '[ HACER ALIAS PARA USUARIO AGENTCTM P1]'
+  lineinfile:
+    path: /controlm/agentctm/.bashrc
+    regexp: "alias ctlstart='sudo /controlm/agentctm/ctm/scripts/start-ag'"
+    line: "alias ctlstart='sudo /controlm/agentctm/ctm/scripts/start-ag'"
+
+- name: '[ HACER ALIAS PARA USUARIO AGENTCTM P2]'
+  lineinfile:
+    path: /controlm/agentctm/.bashrc 
+    regexp: "alias ctlstop='sudo /controlm/agentctm/ctm/scripts/shut-ag'"
+    line: "alias ctlstop='sudo /controlm/agentctm/ctm/scripts/shut-ag'"
+        
+- name: '[ LEVANTAR SERVICIO ]'
+  shell: ctlstart
+  become: yes
+  become_user: agentctm
+  ignore_errors: yes
+
+- name: '[ CREACION DE DEMONIO DE CONTROLM ]'
+  synchronize:
+    src: ctag.service
+    dest: /etc/systemd/system/
+
+- name: '[ HABILITAR SERVICIO ]'
+  shell: systemctl daemon-reload; systemctl enable ctag.service; systemctl start ctag.service
+

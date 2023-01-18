@@ -1,0 +1,17 @@
+---
+- name: '[ DESHABILITAR IPV6 EN GRUB ]'
+  shell:
+    cmd: grep "ipv6.disable=1" /etc/default/grub || sed -i 's/rhgb quiet/ipv6.disable=1 rhgb quiet/g' /etc/default/grub
+
+- name: '[ RECONSTRUCCION DE GRUB ]'
+  shell:
+    cmd: if [ -s /etc/grub2.cfg ]; then grub2-mkconfig -o "/etc/grub2.cfg" ; elif [ -s /etc/grub2-efi.cfg ]; then grub2-mkconfig -o "/etc/grub2-efi.cfg" ; fi
+
+- name: CONFIGURACIONES DE SEGURIDAD
+  sysctl:
+    name: '{{ item.key }}'
+    value: '{{ item.value }}'
+    state: present
+    ignoreerrors: yes
+    reload: yes
+  with_dict: '{{secureValues}}'

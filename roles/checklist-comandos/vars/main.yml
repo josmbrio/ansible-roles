@@ -1,0 +1,51 @@
+---
+paquetesiso:
+  - bc
+  - vim
+  - tar
+  - zip
+  - java
+  - tcpdump
+  - nc
+  - bind-utils
+  - iotop
+  - sysstat
+  - net-tools
+  - filesystem
+  - lsof
+  - traceroute
+  - bash-completion
+  - rsync
+  - chrony
+  - cockpit
+  - mlocate
+  - telnet
+  - psmisc
+paquetesopcionales7:
+  - 'htop-2.2.0-3.el7.x86_64.rpm'
+paquetesopcionales8:
+  - 'htop-2.2.0-6.el8.x86_64.rpm'
+paquetezabbix7:
+  - 'zabbix-agent2-5.0.3-1.el7.x86_64.rpm'
+paquetezabbix8:
+  - 'zabbix-agent2-5.2.2-1.el8.x86_64.rpm'
+paquetesopcionales7ruta:
+  - '/root/opcionales/htop-2.2.0-3.el7.x86_64.rpm'
+paquetesopcionales8ruta:
+  - '/root/opcionales/htop-2.2.0-6.el8.x86_64.rpm'
+paquetezabbix7ruta:
+  - '/root/opcionales/zabbix-agent2-5.0.3-1.el7.x86_64.rpm'
+paquetezabbix8ruta:
+  - '/root/opcionales/zabbix-agent2-5.2.2-1.el8.x86_64.rpm'
+paquetesnetdata:
+  - zlib-devel
+  - libuuid-devel
+  - libmnl
+  - gcc
+  - make
+  - git
+  - autoconf
+  - autogen-libopts
+  - automake
+  - pkgconfig
+  - curl

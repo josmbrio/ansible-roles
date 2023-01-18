@@ -1,0 +1,8 @@
+---
+paquetesasmrpm:
+  - cvuqdisk-1.0.10-1.rpm
+  - oracleasmlib-2.0.12-1.el7.x86_64.rpm
+  - oracleasm-support-2.1.11-2.el7.x86_64.rpm
+paquetesasm:
+  - kmod-libs
+  - kmod-oracleasm

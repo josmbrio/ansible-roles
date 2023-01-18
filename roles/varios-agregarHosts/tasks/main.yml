@@ -1,0 +1,14 @@
+---
+- name: '[ CONFIGURAR /ETC/HOSTS TITULO ]'
+  lineinfile:
+    path: /etc/hosts
+    regexp: "#COMMVAULT ENVIRONMENT"
+    line: "#COMMVAULT ENVIRONMENT"
+
+- name: '[ CONFIGURAR /ETC/HOSTS ]'
+  lineinfile:
+    path: /etc/hosts
+    regexp: "{{ item.value }}"
+    line: "{{ item.key }} {{ item.value }}"
+  with_dict: "{{ registrosHostnames }}"
+

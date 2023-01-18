@@ -1,0 +1,4 @@
+---
+# tasks file for oracle19-hugepage
+- name: "DESHABILITAR TRANSPARENT HUGE PAGE"
+  shell: grubby --args "transparent_hugepage=never" --update-kernel $(grubby --default-kernel)

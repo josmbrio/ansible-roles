@@ -1,0 +1,14 @@
+## Clave por omisión: gmonitor, pedirá cambiar la clave en primer acceso
+---
+- hosts: '{{ servidor }}'
+  gather_facts: no
+  vars_prompt:
+    - name: servidor
+      prompt: "En que servidor?"
+      private: no
+      default: "localhost"
+    - name: comentario
+      prompt: "Ingrese el numero del SOLNET"
+      private: no
+  roles:
+    - {role: varios-gmonitor}

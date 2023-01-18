@@ -1,0 +1,6 @@
+---
+- name: "CREAR ARCHIVO DE KEEPASS"
+  ansible.builtin.template:
+    src: roles/jbrtest_keepass/templates/Template_Ingreso_Keepass.csv
+    dest: "/tmp/Ingreso_Keepass_{{hostname}}.csv"
+    

@@ -1,0 +1,14 @@
+---
+- hosts: '{{servidor}}'
+  gather_facts: yes
+  vars_prompt:
+    - name: servidor
+      prompt: "¿En que servidor o grupo de servidores?"
+      private: no
+    - name: notes
+      prompt: "\n==> Descripcion/Notas"
+      private: no
+
+- roles:
+    - {role: keepass-ingresar}
+

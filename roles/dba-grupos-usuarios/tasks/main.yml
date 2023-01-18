@@ -1,0 +1,16 @@
+---
+- name: "CREAR GRUPOS"
+  group:
+    name: "{{item.key}}"
+    gid: "{{item.value}}"
+    state: present
+  with_dict: "{{dbagroups}}"
+- name: "CREAR USUARIOS"
+  user:
+    name: "{{item.key}}"
+    group: oinstall
+    groups: "{{item.value}}"
+    password: "{{ '{{item.key}}' | password_hash('sha512') }}"
+    state: present
+  with_dict: "{{dbausers}}"
+

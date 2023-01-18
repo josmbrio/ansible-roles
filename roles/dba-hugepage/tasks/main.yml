@@ -1,0 +1,3 @@
+---
+- name: "DESHABILITAR TRANSPARENT HUGE PAGE"
+  shell: grubby --args "transparent_hugepage=never" --update-kernel $(grubby --default-kernel)

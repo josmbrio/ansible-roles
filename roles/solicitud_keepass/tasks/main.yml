@@ -1,0 +1,36 @@
+- name: Crear archivo de Keepass
+  lineinfile:
+    path: /tmp/Ingreso_Keepass.csv
+    line: "Tipo;Hostname;Protocolo;IP Principal;User;Password;Notas"
+    create: yes
+  delegate_to: localhost
+  run_once: true
+
+- name: Agrega servidores al archivo de Keepass
+  lineinfile:
+    path: /tmp/Ingreso_Keepass.csv
+    line: "{{ansible_distribution}};{{ansible_hostname}};ssh;{{ansible_default_ipv4['address']}};{{ansible_user_id}};{{password}};{{notas}}"
+  delegate_to: localhost
+
+- name: Envia archivo de keepass al correo de SCA
+  mail:
+    host: 192.168.35.61
+    port: 25
+    subject: Ingresar servidores a Keepass
+    body: Estimado Sixto, Favor tu ayuda ingresando estos servidores al keepass.
+    from: ansible_infr@claro.com.ec
+    to:
+      - scallea@claro.com.ec
+    cc: "{{correo_adicional}}" 
+    attach:
+      - /tmp/Ingreso_Keepass.csv
+  delegate_to: localhost
+  run_once: true
+
+- name: Elimina archivo de Keepass
+  file:
+    path: /tmp/Ingreso_Keepass.csv
+    state: absent
+  delegate_to: localhost
+  run_once: true
+

@@ -1,0 +1,12 @@
+---
+- hosts: '{{servidor}}'
+  gather_facts: no
+  vars_prompt:
+    - name: servidor
+      prompt: "En que servidor?"
+      private: no
+    - name: comentario
+      prompt: "Comentario: "
+      private: no
+  roles:
+    - role: varios-gmonitor

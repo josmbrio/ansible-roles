@@ -1,0 +1,48 @@
+---
+# tasks file for varios-instalacionConPaquetesLocales
+- name: "[ TRANSFERIR PAQUETES PARA INSTALACION ]"
+  synchronize:
+    src: "/var/www/html/RHEL/7.9"
+    dest: "/var/RHEL/"
+  when:
+    - ansible_facts['distribution_major_version'] == "7"  
+
+- name: "[ TRANSFERIR PAQUETES PARA INSTALACION 8]"
+  synchronize:
+    src: "var/www/html/RHEL/8.2"
+    dest: "/var/RHEL"
+  when:
+    - ansible_facts['distribution_major_version'] == "8"
+
+- name: '[ CREAR REPOSITORIO PARA RHEL 7 ]'
+  yum_repository:
+    name: bastionREPO
+    file: bastionREPO
+    description: Repositorio apache para RHEL 7.8
+    baseurl: "file:///var/RHEL/7.9"
+    gpgcheck: no
+    enabled: yes
+  when:
+    - ansible_facts['distribution_major_version'] == "7"
+
+- name: '[ CREAR REPOSITORIO PARA RHEL 8 BASEOS ]'
+  yum_repository:
+    name: bastionREPOBO
+    file: bastionREPOBO
+    description: Repositorio apache para RHEL 8.1 BaseOS
+    baseurl: "file:///var/RHEL/8.2/BaseOS/"
+    gpgcheck: no
+    enabled: yes
+  when:
+    - ansible_facts['distribution_major_version'] == "8"
+
+- name: '[ CREAR REPOSITORIO PARA RHEL 8 APPSTREAMS]'
+  yum_repository:
+    name: bastionREPOAS
+    file: bastionREPOAS
+    description: Repositorio apache para RHEL 8.1 AppStream
+    baseurl: "file:///var/RHEL/8.2/AppStream/"
+    gpgcheck: no
+    enabled: yes
+  when:
+    - ansible_facts['distribution_major_version'] == "8"

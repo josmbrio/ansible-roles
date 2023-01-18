@@ -1,0 +1,6 @@
+---
+# vars file for ./roles/weblogic-grupo-usuario
+dbagroups:
+  oinstall: 54321
+dbausers:
+  oracle: 'oinstall'

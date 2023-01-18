@@ -1,0 +1,7 @@
+---
+# tasks file for varios-cambiarPassword
+- name: '[CAMBIA LA CONTRASEÑA DE UN USUARIO]'
+  user:
+      name: root
+      update_password: always
+      password: "{{ newpassword|password_hash('sha512') }}"

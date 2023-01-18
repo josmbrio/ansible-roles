@@ -1,0 +1,7 @@
+---
+# tasks file for oracle19-network
+- name: "CONFIGURAR PROMPT EN BASHRC"
+  lineinfile:
+    path: /etc/sysconfig/network
+    regexp: 'NOZEROCONF'
+    line: NOZEROCONF=yes

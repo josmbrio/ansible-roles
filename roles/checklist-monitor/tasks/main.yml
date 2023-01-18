@@ -1,0 +1,81 @@
+---
+- name: '[ CREACION DE USUARIO MONITOR ]'
+  user:
+    name: monitor
+    group: users
+    password: $6$8vfVSPMBqL7bdc/G$DahDJahyqkINCqVvYHmns8BKYL3NyksopCC1yag/EAtgetDEhWRs33WSnKoIGtf4cogeYUKNwnUIp2WT5PjEg0
+
+- name: '[ ELIMINAR EXPIRACION DE CONTRASEÑA ]'
+  command: passwd -x -1 monitor
+
+- name: '[ CREACION DE CARPETAS PARA USUARIO MONITOR ]'
+  file:
+    path: /var/log/monitor
+    state: directory
+    owner: monitor
+    group: users
+
+- name: '[ COPIAR SCRIPTS EN EL HOME DEL USUARIO MONITOR ]'
+  synchronize:
+    src: scripts
+    dest: /home/monitor/
+
+- name: '[ OTORGAR PERMISOS A MONITOR P1 ]'
+  file:
+    path: /home/monitor/scripts/ies
+    state: file
+    mode: a+x
+
+- name: '[ OTORGAR PERMISOS A MONITOR P2 ]'
+  file:
+    path: /home/monitor/scripts
+    state: directory
+    recurse: yes
+    owner: monitor
+    group: users
+
+- name: '[ ENCERAR CRONTAB DE MONITOR ]'
+  command: crontab -r -u monitor
+  ignore_errors: yes
+
+- name: '[ CONFIGURAR CRONTAB DE MONITOR - CONEXIONES ]'
+  cron:
+    name: "Generador de Conexiones.log"
+    minute: "*/5"
+    user: monitor
+    job: "sh /home/monitor/scripts/conexiones/conexiones.sh >> /var/log/monitor/conexiones.log 2>> /var/log/monitor/conexiones.err"
+
+- name: '[ CONFIGURAR CRONTAB DE MONITOR - FS]'
+  cron:
+    name: "Validacion de Filesystems"
+    minute: "*/15"
+    user: monitor
+    job: "cd /home/monitor/scripts/fsmon/ ; sh fs_mon.sh >> /var/log/monitor/fs_mon.log 2>> /var/log/monitor/fs_mon.err"
+
+- name: '[ CONFIGURAR CRONTAB DE MONITOR - MEMORIA ]'
+  cron:
+    name: "Validacion de Memoria"
+    minute: "*/5"
+    user: monitor
+    job: "sh /home/monitor/scripts/mon_mem.sh 2>&1"
+
+- name: '[ CONFIGURAR CRONTAB DE MONITOR - CPU ]'
+  cron:
+    name: "Validacion de CPU"
+    minute: "*/5"
+    user: monitor
+    job: "sh /home/monitor/scripts/mon_cpu.sh 2>&1"
+
+
+- name: '[ CREAR ARCHIVO LOGROTATE PARA CONEXIONES.LOG ]'
+  blockinfile:
+    path: /etc/logrotate.d/monitorlog
+    block: |
+           /var/log/monitor/*.log {
+                weekly
+                rotate 3
+                compress
+                delaycompress
+           }
+    create: true
+

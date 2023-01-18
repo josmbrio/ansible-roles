@@ -1,0 +1,15 @@
+---
+# vars file for oracle19-limits
+- name: '[ MEMLOCK SOFT ]'
+  pam_limits:
+    domain: '*'
+    limit_type: soft
+    limit_item: memlock
+    value: 5662311
+
+- name: '[ MEMLOCK HARD ]'
+  pam_limits:
+    domain: '*'
+    limit_type: hard
+    limit_item: memlock
+    value: 5662311

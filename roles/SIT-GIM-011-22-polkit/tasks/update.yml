@@ -1,0 +1,9 @@
+  - name: ACTUALIZAR POLKIT RHEL  
+    yum:
+      name: "{{ packages }}"
+      state: latest
+      update_only: yes
+      update_cache: yes
+      disable_plugin: '*'
+      disablerepo: '*'
+      enablerepo: "{{ repos }}"
