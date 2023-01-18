@@ -1,0 +1,5 @@
+sendMail.host = 130.2.18.61
+sendMail.from = NTP_pgdcone-api-n01@conecel.com
+sendMail.to   = sisservidores@claro.com.ec;acargua@claro.com.ec;sisnoc2@claro.com.ec;sisnoc@claro.com.ec;sisnoc3@claro.com.ec
+sendMail.subject = :: pgdcone-api-n01 - REVISION EXITOSA DE SYNCRONIZACION NTP ::
+sendMail.message = NTP_SYNC-pgdcone-api-n01, Servidor se encuentra sincronizado a los servidores NTP 130.2.2.159 130.2.18.61

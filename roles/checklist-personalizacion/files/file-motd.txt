@@ -1,0 +1,15 @@
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║                          A T E N C I O N                           ║ 
+║                                                                    ║ 
+║ Este es un Sistema Privado operado por Claro - CONECEL S.A.        ║
+║ Es requerida autorizacion por parte de la Gerencia de              ║
+║ Infraestructura TI para el acceso y uso de este sistema.           ║
+║                                                                    ║
+║ El Acceso no autorizado a sistemas de computacion y comunicaciones ║ 
+║ infringe las normas y  politicas de seguridad informatica internas ║
+║ establecidas  por CONECEL y  sera penalizado segun los reglamentos ║
+║ internos y leyes locales vigentes.                                 ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+

@@ -1,2 +1,6 @@
-roles/*/files/*
+roles/*/files/*.rpm
+roles/*/files/*.tar
+roles/*/files/*.gz
+roles/ctm-archivos/files/*
+roles/docker-configuracion/files/docker-compose-Linux-*
 roles/varios-qkview/collections

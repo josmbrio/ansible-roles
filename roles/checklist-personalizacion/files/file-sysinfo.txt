@@ -1,0 +1,133 @@
+#!/bin/bash
+### Commands full paths
+
+function imprimir_linea(){
+        echo -n "     ║";
+        fg=$(tput setaf 7); bg=$(tput setab 1); echo -n $fg$bg;
+        echo -n "${texto}";
+        fg=$(tput setaf 7); bg=$(tput setab 0); echo -n $fg$bg;
+        echo "║";
+}
+
+function imprimir_logo(){
+
+fg=$(tput setaf 7); bg=$(tput setab 0); echo -n $fg$bg;
+echo "     ╔════════════════════════════════════════════════════════════════╗";
+
+texto='                                                                '; imprimir_linea;
+texto='                                            ██     ██           '; imprimir_linea;
+texto='                                            ██   ██             '; imprimir_linea;
+texto='          █████                                 ██              '; imprimir_linea;
+texto='         ██    ██  ██   █████    █ ███   █████     ████         '; imprimir_linea;
+texto='         ██        ██       ██   ██     ██   ██                 '; imprimir_linea;
+texto='         ██        ██   ██████   ██     ██   ██                 '; imprimir_linea;
+texto='         ██    ██  ██  ██   ██   ██     ██   ██                 '; imprimir_linea;
+texto='          █████     ██  ████ ██  ██      █████                  '; imprimir_linea;
+texto='                                                                '; imprimir_linea;
+
+echo -n $(tput sgr0);
+
+echo "     ╚════════════════════════════════════════════════════════════════╝";
+}
+
+function sysinfo () {
+RED="\033[01;31m"
+GREEN="\033[01;32m"
+YELLOW="\033[01;33m"
+BLUE="\033[01;34m"
+PURPLE="\033[01;35m"
+CYAN="\033[01;36m"
+WHITE="\033[01;37m"
+NC="\033[00m"
+
+ip=/usr/sbin/ip
+wc=/usr/bin/wc
+cut=/usr/bin/cut
+awk=/usr/bin/awk
+uniq=/usr/bin/uniq
+head=/usr/bin/head
+date=/usr/bin/date
+free=/usr/bin/free
+uname=/usr/bin/uname
+uptime=/usr/bin/uptime
+whoami=/usr/bin/whoami
+hostname=/usr/bin/hostname
+runlevel=/usr/sbin/runlevel
+dmidecode=/usr/sbin/dmidecode
+systemctl=/usr/bin/systemctl
+
+### Var declaration
+Description="iSCSI Storage Target Server"
+USE="production use"
+COMPANY="Sistemas - Network, Claro - CONECEL S.A."
+RUNLEVEL="$($runlevel) ($($systemctl get-default))"
+SYSTEM=$($uname -o)
+KERNEL="$($uname -s) $($uname -r)"
+RELEASE=$(cat /etc/redhat-release)
+NODENAME=$($hostname)
+HWVENDOR=$($dmidecode -s chassis-manufacturer 2> /dev/null)
+HWMODEL=$($dmidecode -s system-product-name 2> /dev/null)
+HWPART=$(dmidecode 2> /dev/null|grep SKU|awk '{print $3}')
+HWSYSVENDOR=$($dmidecode -s system-manufacturer 2> /dev/null)
+HWSERIAL=$($dmidecode 2> /dev/null|grep 'Serial Number'|$head -1|$awk -F': ' '{print $2}')
+DATE=$($date '+%b %d %Y %H:%M:%S')
+UPTIME=$($uptime|$awk '{print $2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "$10}')
+USERNAME=$($whoami)
+IPCLIENTE=$(echo $SSH_CLIENT|$awk '{print $1}')
+MYTTY=$(echo SSH_TTY)
+
+IP_TENT=$(env | grep "^SSH_CONNECTION=" | awk '{print $3}')
+IFACE=$(ip addr | grep -B2 -w $IP_TENT | head -n 1 | cut -d: -f2)
+IPADDR=$($ip add show $IFACE|grep 'inet '|$head -1|$awk '{print $2}'|$cut -d/ -f1)
+NET=$($ip route list dev $IFACE|grep src|$cut -d" " -f1)
+
+SOCKETS=$(lscpu | grep "Socket(s):" | awk -F: '{print $2}' | tr -d ' ')
+CORExSOCKET=$(lscpu | grep "Core(s) per socket:" | awk -F: '{print $2}' | tr -d ' ')
+CPUCORES=$(echo $SOCKETS*$CORExSOCKET | bc)
+CPUS=$(lscpu | grep "^CPU(s):" | awk -F: '{print $2}' | tr -d ' ')
+CPUMODEL=$(lscpu | grep "Model name:" | awk -F: '{print $2}' | sed -e 's/[[:space:]]*//')
+
+RAM=$($free -h|grep Mem|$awk '{print $2"B"}')
+SWAP=$($free -h|grep Swap|$awk '{print $2"B"}')
+
+### Main function
+clear
+
+imprimir_logo
+
+echo -e "${RED}System installed, configured, tuned, hardened and ready for $USE"
+echo -e "${RED}by SIS.Net.Servidores, Claro, CONECEL S.A."
+echo ""
+echo -e ${BLUE} $DATE $UPTIME
+echo "=========================================================================="
+sleep 0.1
+echo -e " ${RED}Hostname    : ${GREEN}$NODENAME"
+sleep 0.1
+echo -e " ${RED}System      : ${GREEN}$SYSTEM"
+sleep 0.1
+echo -e " ${RED}Release     : ${GREEN}$RELEASE"
+sleep 0.1
+echo -e " ${RED}Kernel      : ${GREEN}$KERNEL"
+sleep 0.1
+echo -e " ${RED}OS Runlevel : ${GREEN}$RUNLEVEL"
+sleep 0.1
+echo -e " ${RED}HW Model    : ${GREEN}$HWVENDOR - $HWMODEL ($HWSYSVENDOR)"
+sleep 0.1
+echo -e " ${RED}HW Serial   : ${GREEN}$HWSERIAL"
+sleep 0.1
+echo -e " ${RED}HW SKU/Part : ${GREEN}$HWPART"
+sleep 0.1
+echo -e " ${RED}HW Platform : ${GREEN}Machine $(uname -m) - Processor $(uname -p) - Arch. $(uname -i)"
+sleep 0.1
+echo -e " ${RED}CPU Info    : ${GREEN}$SOCKETS Socket(s), $CPUCORES Core(s), $CPUS CPU(s), $CPUMODEL"
+sleep 0.1
+echo -e " ${RED}Mem Info    : ${GREEN}$RAM RAM - $SWAP Swap"
+sleep 0.1
+echo -e " ${RED}IP Network  : ${GREEN}IP Addr $IPADDR - Network $NET - Iface $IFACE"
+sleep 0.1
+echo -e "${BLUE}=========================================================================="
+echo -e "${BLUE}Connected as User ${YELLOW}($USERNAME) ${BLUE}on TTY ${YELLOW}($SSH_TTY) ${BLUE}from Host ${YELLOW}($IPCLIENTE)"
+echo -e "${NC}"
+}
+
+sysinfo

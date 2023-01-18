@@ -1,0 +1,264 @@
+#!/bin/bash
+# Fecha de Modificacion 17/02/2004
+#  - Se agrego bitacora de envio ies
+#  - Opcion OSF1 para servidores TrueUnix como el CFMS
+# Formato del archivo DatFile
+# CLASSPATH|<ruta de CLASSPATH java>
+# PATH|<path a java>
+# FS|<Filesystem>|<Porcentaje maximo>  -> Define Filesystem a monitorear y %Max
+# Definir las variables CLASSPATH y PATH de java en el profile del usuario
+
+# VARIABLES DEL PROGRAMA
+fecha=`date +%d-%m-%y\ %H:%M`
+PATH=/usr/local/bin:/usr/bin:/usr/ucb:/etc:$PATH
+DatFile="fs_mon.dat"
+tmpFile="fs_mon.tmp"
+SendFile="fs_mon.ies"
+BitacoraFile="/var/log/monitor/fs_mon.log"
+hostFile="/etc/hosts"
+GroupsToSend3="FS_MON3"
+GroupsToSend2="FS_MON2"
+GroupsToSend1="FS_MON1"
+#GroupsToSend="FS_MON"   80  95
+DefaultMaxPercent=80
+TOPEMAX_SIEMPREENVIA=90
+
+
+narch="fs_mon.nivel"
+
+#VARIABLES DE AMBIENTE
+#CLASSPATH
+CLASSPATH=`cat $DatFile|awk -F\| '$1 == "CLASSPATH" {print $2}'`
+export CLASSPATH
+#PATH
+PATH=`cat $DatFile|awk -F\| '$1 == "PATH" {print $2}'`:$PATH
+export PATH
+
+#OS
+OS=`uname`
+echo $OS
+
+# Obtener la direccion ip
+OS=`uname`
+case $OS in
+     UnixWare) 
+     	ipAddress=`/usr/sbin/ifconfig -a|grep inet|grep netmask|grep -v 127.0.0.1|awk '{print $2"-"}'`;;
+     SCO_SV)   
+	ipAddress=`/etc/ifconfig -a|grep inet|grep netmask|grep -v 127.0.0.1|awk '{print $2"-"}'`;;
+     Linux)    
+	ipAddress=`/sbin/ifconfig -a|grep inet|grep "[Mm]ask"|grep -v 127.0.0.1|awk '{print $2}'|awk -F: '{print $2}'|head -1`;;
+     HP-UX)    
+	ipAddress=`/etc/ifconfig lan0|grep inet|grep netmask|grep -v 127.0.0.1|awk '{print $2"-"}'`;;
+     OSF1)     
+	ipAddress=`/sbin/ifconfig -a|grep inet|grep netmask|grep -v 127.0.0.1|awk '{print $2"-"}'`;;
+esac
+IP="${HOSTNAME%%.*} ($ipAddress):"
+
+#EXTRAE FS DEL SERVIDOR, MAXPERCENTDEFAULT=80
+case $OS in
+     UnixWare) 
+	mtabFile="/etc/mnttab"
+	cat $mtabFile|awk '($3 == "vxfs" || $3 == "nfs"){print $2}' > $DatFile.din.tmp;;
+    SCO_SV)
+    	#mtabFile="";;     #NO SE USA
+        df |grep "/"|grep -v "/stand"|awk '{print $1}' > $DatFile.din.tmp;;
+    SunOS)
+    	mtabFile="/etc/mnttab"
+    	cat $mtabFile|awk '($3 == "ufs" || $3 == "nfs"){print $2}' > $DatFile.din.tmp;;
+    Linux)
+    	mtabFile="/etc/mtab"
+    	cat $mtabFile|egrep -v '/mnt|/media|ora'|awk '($3 == "ext2" || $3 == "ext3" || $3 == "ext4" || $3 == "nfs"){print $2}' > $DatFile.din.tmp;;
+    HP-UX)
+    	mtabFile="/etc/mnttab"
+    	cat $mtabFile|awk|ora2 '($3 == "vxfs" |ora2| $3 == "nfs"){print $2}' > $DatFile.din.tmp;;
+    OSF1)
+    	mtabFile="/etc/fstab"
+    	cat $mtabFile|awk '($3 == "advfs" || $3 == "nfs"){print $2}' > $DatFile.din.tmp;;
+esac
+
+#cat $mtabFile|awk '{print "FS|"$2"|99"}' > $DatFile.din.tmp
+> $DatFile.din.tmp3
+for i in `cat $DatFile.din.tmp`
+    do echo "FS|$i|$DefaultMaxPercent" >> $DatFile.din.tmp3
+done
+
+cat $DatFile|awk -F\| '($1 == "FS") {print $0}' > $DatFile.din.tmp2
+sort -t\| -k 2,2 $DatFile.din.tmp3 -o $DatFile.din.tmp3
+sort -t\| -k 2,2 $DatFile.din.tmp2 -o $DatFile.din.tmp2
+join -t\| -1 2 -2 2 -o "1.1 1.2 1.3" $DatFile.din.tmp2 $DatFile.din.tmp3 > $DatFile.din
+join -t\| -v2  -1 2 -2 2 -o "2.1 2.2 2.3" $DatFile.din.tmp2 $DatFile.din.tmp3 >> $DatFile.din
+
+
+# BUSQUEDA DE FS DINAMICO
+if [ -s $DatFile.hist ]
+   then mv $DatFile.hist $DatFile.hist.prev
+        echo
+fi
+
+> $DatFile.hist
+> $DatFile.variaciones
+> $DatFile.ies
+
+for i in `cat $DatFile.din|awk -F\| '$1 == "FS" {print $0}'`
+    do FS=`echo $i|awk -F\| '{print $2}'`
+       MaxPercent=`echo $i|awk -F\| '{print $3}'`
+       case $OS in
+            UnixWare)
+		fs=`df -v $FS|tail -1|awk '{print $1}'`
+           	Percent=`df -v $FS|tail -1|awk '{print $6}'|awk -F\% '{print $1}'`;;
+    	    SCO_SV)
+      		fs=`df -v $FS|tail -1|awk '{print $1}'`
+      		Percent=`df -v $FS|tail -1|awk '{print $6}'|awk -F\% '{print $1}'`;;
+            SunOS)
+      		fs=`df -v $FS|tail -1|awk '{print $1}'`
+      		Percent=`df -v $FS|tail -1|awk '{print $6}'|awk -F\% '{print $1}'`;;
+            Linux)
+      		fs=`df -P $FS|tail -1|awk '{print $6}'`
+      		Percent=`df -P $FS|tail -1|awk '{print $5}'|awk -F\% '{print $1}'`;;
+            HP-UX)
+      		fs=`df -P $FS|tail -n 1|awk '{print $6}'`
+      		Percent=`df -P $FS|tail -n1|awk '{print $5}'|awk -F\% '{print $1}'`
+       esac
+       df -v $FS > $tmpFile
+       echo $fs"asd"
+       echo "$fs|$Percent|$MaxPercent" >> $DatFile.hist
+done
+
+## AGREGA FACTOR
+file=$DatFile.hist
+tope=`echo $DefaultMaxPercent|awk '{print ($1+1)}'`
+longitud=3
+tmpfile="factor.tmp"
+> $tmpfile
+
+for i in `cat $file`
+    do i_1=`echo $i|awk -F\| '{print $1}'`
+       i_2=`echo $i|awk -F\| '{print $2}'`
+       i_3=`echo $i|awk -F\| '{print $3}'`
+       #echo "$file - $tope - $longitud - $i_1 $i_2 $i_3"
+       i_4=`echo $i_2 $tope $longitud|awk '{if ($1>$2) 
+            print ( int(($1-$2)/$3) ) 
+            else print 0 }'`
+       echo "$i|$i_4" >> $tmpfile
+    done
+
+mv $tmpfile $file
+
+
+
+## BUSCAR VARIACIONES, MAYORES A MAXPERCENT
+for i in `cat $DatFile.hist`
+    do act_f=`echo $i|awk -F\| '{print $1}'`
+       act_t=`echo $i|awk -F\| '{print $2}'`
+       act_mx=`echo $i|awk -F\| '{print $3}'`
+       act_p=`echo $i|awk -F\| '{print $4}'`
+       echo "---- $act_f $act_t $act_mx $act_p"
+       
+       if [ -s $DatFile.hist.prev ]
+          then prev_flag=0
+               for j in `cat $DatFile.hist.prev`
+                   do if [ $act_f = `echo $j|awk -F\| '{print $1}'` ]
+      			  then prev=`echo $j|awk -F\| '{print $0}'`
+        		       prev_flag=1
+      		      fi
+    	       done
+
+    	       if [ $prev_flag = "1" ]
+	          then prev_t=`echo $prev|awk -F\| '{print $2}'`
+      		       prev_p=`echo $prev|awk -F\| '{print $4}'`
+      		       if [ $act_t -ge $TOPEMAX_SIEMPREENVIA ]
+      			  then echo "FILESYSTEM AL $TOPEMAX_SIEMPREENVIA%: $act_f "
+        		       echo "$act_f al $act_t%%;" >> $DatFile.variaciones
+                          else if [ $act_p -gt $prev_p ]
+                                  then if [ $act_t -gt $act_mx ]
+                                          then echo "VARIACION ENCONTRADA : $i -- $prev "
+            				       echo "$act_f al $act_t%%;" >> $DatFile.variaciones
+          			       fi
+     			       fi
+      		       fi
+    	       fi
+
+ 	  else if [ $act_t -ge $TOPEMAX_SIEMPREENVIA ]
+    		  then echo "FILESYSTEM AL $TOPEMAX_SIEMPREENVIA%: $act_f "
+      		       echo "$act_f al $act_t%%;" >> $DatFile.variaciones
+    	       fi
+       fi
+done
+
+
+#ADICIONAR GRUPOS DE ENVIO del .dat
+for i in `cat $DatFile|awk -F\| '$1 == "GRP" {print $0}'`
+    do GroupDatTmp=`echo $i|awk -F\| '{print $2}'`
+       GroupsToSend=`echo "$GroupsToSend $GroupDatTmp"`
+done
+
+#ENVION DE SMS POR NIVEL
+if [ ! -s $narch ]
+   then echo "1" > $narch
+fi 
+
+cat $narch
+nivel=`cat $narch`
+echo $nivel
+tmp=0
+echo $tmp
+
+# ENVIO DE VARIACIONES-INCREMENTOS
+if [ $nivel -eq 1 ]
+   then echo "Entrando a Nivel 1"
+        if [ -s $DatFile.variaciones ]
+           then echo "$IP " > $DatFile.ies
+                cat $DatFile.variaciones >> $DatFile.ies
+                for k in `echo $GroupsToSend3`
+                    do Grupo=$k
+  		       java porta.monitor.Monitor "$Grupo" "$DatFile.ies"
+		       tmp=`expr $nivel + 1`
+		       echo "Sumando de Nivel 1" 
+  		done
+ 	        echo "$fecha: `cat $DatFile.ies|awk '{printf "%s",$0}'`" >> $BitacoraFile
+	fi
+fi
+
+
+if [ $nivel -eq 2 ]
+   then echo "Entrando a Nivel 2"
+        if [ -s $DatFile.variaciones ]
+  	   then echo "$IP " > $DatFile.ies
+  	        cat $DatFile.variaciones >> $DatFile.ies
+                for k in `echo $GroupsToSend2`
+                    do Grupo=$k
+    		       java porta.monitor.Monitor "$Grupo" "$DatFile.ies"
+   		       tmp=`expr $nivel + 1`
+   		       echo "Sumando de Nivel 2"
+  		done
+  		echo "$fecha: `cat $DatFile.ies|awk '{printf "%s",$0}'`" >> $BitacoraFile
+	fi
+fi
+
+
+if [ $nivel -eq 3 ]
+   then echo "Entrando a Nivel 3"
+        if [ -s $DatFile.variaciones ]
+	   then echo "$IP " > $DatFile.ies
+  		cat $DatFile.variaciones >> $DatFile.ies
+  		for k in `echo $GroupsToSend1`
+  		    do Grupo=$k
+   		       java porta.monitor.Monitor "$Grupo" "$DatFile.ies"
+ 		       tmp=1
+ 		done
+  		echo "$fecha: `cat $DatFile.ies|awk '{printf "%s",$0}'`" >> $BitacoraFile
+	fi
+fi
+
+
+cat $narch
+echo $nivel
+echo $tmp
+
+if [ $tmp -gt 0 ]
+   then echo $tmp > $narch
+   else rm $narch
+fi
+
+rm $DatFile.din $DatFile.din.tmp $DatFile.din.tmp2 $DatFile.din.tmp3 $DatFile.variaciones $tmpFile
+
